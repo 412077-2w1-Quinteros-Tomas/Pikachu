@@ -1,0 +1,87 @@
+<div class="page">
+
+  @if (view() === 'list') {
+    <div class="list-view">
+      <div class="list-header">
+        <h1 class="list-title">Mis Mazos</h1>
+        <button class="btn-primary" (click)="newDeck()">+ Nuevo mazo</button>
+      </div>
+
+      @if (loading()) {
+        <div class="list-empty"><p>Cargando mazos...</p></div>
+      } @else if (decks().length === 0) {
+        <div class="list-empty">
+          <div class="list-empty-icon">🃏</div>
+          <p>Todavía no tenés mazos.</p>
+          <p class="list-empty-hint">Creá tu primer mazo para jugar.</p>
+        </div>
+      } @else {
+        <div class="deck-cards-grid">
+          <app-deck-list
+            [decks]="decks()"
+            (deckSelected)="editDeck($event)"
+            (deckDeleted)="deleteDeck($event)"
+          />
+        </div>
+      }
+    </div>
+  }
+
+  @if (view() === 'edit') {
+    <div class="edit-view">
+      <div class="edit-toolbar">
+        <button class="btn-secondary" (click)="cancelEdit()">← Volver</button>
+        <input
+          type="text"
+          class="deck-name-input"
+          placeholder="Nombre del mazo..."
+          [ngModel]="deckName()"
+          (ngModelChange)="deckName.set($event)"
+        />
+        <input
+          type="text"
+          class="deck-desc-input"
+          placeholder="Descripción (opcional)"
+          [ngModel]="deckDescription()"
+          (ngModelChange)="deckDescription.set($event)"
+        />
+        @if (error()) {
+          <span class="error-msg">{{ error() }}</span>
+        }
+        <div class="toolbar-spacer"></div>
+        <button class="btn-primary" (click)="saveDeck()" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : '💾 Guardar mazo' }}
+        </button>
+      </div>
+
+      <div class="edit-body">
+        <div class="panel catalog-panel">
+          <div class="panel-title">Catálogo de cartas</div>
+          <app-card-catalog (cardSelected)="onCardSelected($event)" />
+        </div>
+
+        <div class="panel editor-panel">
+          <div class="panel-title">Contenido del mazo</div>
+          <app-deck-editor
+            [entries]="editorEntries()"
+            (entryChanged)="onEntriesChanged($event)"
+            (cardDetailRequested)="onCardDetailRequested($event)"
+          />
+        </div>
+
+        <div class="panel summary-panel">
+          <div class="panel-title">Resumen</div>
+          <app-deck-summary [entries]="editorEntries()" [deckName]="deckName()" />
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (selectedCard()) {
+    <app-card-detail-modal
+      [card]="selectedCard()!"
+      (addRequested)="onCardDetailAdd($event)"
+      (closed)="selectedCard.set(null)"
+    />
+  }
+</div>

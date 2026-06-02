@@ -1,0 +1,80 @@
+<article
+  class="card"
+  [class.card--selected]="selected()"
+  [class.card--compact]="compact()"
+  [attr.data-type]="card().cardType"
+  (click)="onCardClick()"
+  (keydown.enter)="onCardClick()"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="card().name"
+>
+  <!-- Image -->
+  <div class="card__image-wrapper">
+    @if (card().imageUrl) {
+      <img
+        class="card__image"
+        [src]="card().imageUrl"
+        [alt]="card().name"
+        loading="lazy"
+      />
+    } @else {
+      <div class="card__image-placeholder">{{ card().name[0] }}</div>
+    }
+  </div>
+
+  <!-- Info (oculto en modo compact) -->
+  @if (!compact()) {
+    <div class="card__info">
+      <div class="card__header">
+        <span class="card__name">{{ card().name }}</span>
+        @if (card().hp) {
+          <span class="card__hp">{{ card().hp }} HP</span>
+        }
+      </div>
+
+      <!-- Tipos -->
+      @if (card().types?.length) {
+        <div class="card__types">
+          @for (type of card().types; track type) {
+            <span
+              class="card__type-badge"
+              [style.background-color]="getEnergyColor(type)"
+              [title]="type"
+            >{{ type }}</span>
+          }
+        </div>
+      }
+
+      <!-- Stage / subtipo -->
+      @if (card().stage) {
+        <span class="card__stage">{{ card().stage }}</span>
+      }
+
+      <!-- Ataques -->
+      @if (card().attacks?.length) {
+        <ul class="card__attacks">
+          @for (attack of card().attacks; track attack.name) {
+            <li class="card__attack">
+              <span class="card__attack-name">{{ attack.name }}</span>
+              <span class="card__attack-damage">{{ attack.damage }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- Debilidad / Resistencia / Retirada -->
+      <div class="card__stats">
+        @if (card().weakness) {
+          <span class="card__stat">W: {{ card().weakness }}</span>
+        }
+        @if (card().resistance) {
+          <span class="card__stat">R: {{ card().resistance }}</span>
+        }
+        @if (card().retreatCost != null) {
+          <span class="card__stat">RC: {{ card().retreatCost }}</span>
+        }
+      </div>
+    </div>
+  }
+</article>

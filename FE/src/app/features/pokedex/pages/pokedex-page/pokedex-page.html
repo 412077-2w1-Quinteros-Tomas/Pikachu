@@ -1,0 +1,81 @@
+<main class="pokedex-page">
+  <header class="pokedex-page__header">
+    <h1 class="pokedex-page__title">Pokédex <span>Set XY1</span></h1>
+    <button class="btn btn--secondary" (click)="syncCards()" [disabled]="loading()">
+      {{ loading() ? 'Sincronizando...' : '↻ Sincronizar cartas' }}
+    </button>
+  </header>
+
+  <section class="pokedex-page__filters">
+    <input
+      class="filter-input"
+      type="text"
+      placeholder="Buscar por nombre..."
+      [ngModel]="nameFilter()"
+      (ngModelChange)="nameFilter.set($event)"
+    />
+    <select class="filter-select" [ngModel]="cardTypeFilter()" (ngModelChange)="cardTypeFilter.set($event)">
+      <option value="">Todos los tipos</option>
+      @for (ct of cardTypes; track ct.value) {
+        <option [value]="ct.value">{{ ct.label }}</option>
+      }
+    </select>
+    <select class="filter-select" [ngModel]="stageFilter()" (ngModelChange)="stageFilter.set($event)">
+      <option value="">Todas las fases</option>
+      @for (s of stages; track s.value) {
+        <option [value]="s.value">{{ s.label }}</option>
+      }
+    </select>
+  </section>
+
+  @if (error()) {
+    <p class="pokedex-page__error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="pokedex-page__loading">Cargando cartas...</p>
+  }
+
+  @if (!loading()) {
+    @if (cards()!.length === 0) {
+      <div class="pokedex-page__empty">
+        <p>No se encontraron cartas.</p>
+        <p class="pokedex-page__empty-hint">Hacé click en "Sincronizar cartas" para cargar el set XY1.</p>
+      </div>
+    } @else {
+      <section class="pokedex-page__grid">
+        @for (card of cards()!; track card.id) {
+          <app-card [card]="card" (clicked)="onCardClicked($event)" />
+        }
+      </section>
+    }
+  }
+
+  @if (selectedCard()) {
+    <div class="pokedex-page__overlay" (click)="closeDetail()">
+      <div class="pokedex-page__detail" (click)="$event.stopPropagation()">
+        <button class="btn btn--close" (click)="closeDetail()">✕</button>
+        <app-card [card]="selectedCard()!" />
+        <div class="pokedex-page__detail-info">
+          <h2>{{ selectedCard()!.name }}</h2>
+          @if (selectedCard()!.abilities?.length) {
+            <h3>Habilidades</h3>
+            @for (ab of selectedCard()!.abilities; track ab.name) {
+              <p><strong>{{ ab.name }}:</strong> {{ ab.effect }}</p>
+            }
+          }
+          @if (selectedCard()!.attacks?.length) {
+            <h3>Ataques</h3>
+            @for (atk of selectedCard()!.attacks; track atk.name) {
+              <p>
+                <strong>{{ atk.name }}</strong>
+                @if (atk.damage) { — {{ atk.damage }} }
+                @if (atk.effect) { <br /><em>{{ atk.effect }}</em> }
+              </p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+</main>

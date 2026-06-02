@@ -1,0 +1,33 @@
+<div class="editor">
+  <div class="editor-header">
+    <span class="card-count" [class.complete]="isComplete()">{{ totalCards() }}</span>
+    <span class="count-label">/ {{ DECK_SIZE }} cartas</span>
+  </div>
+
+  @if (entries().length === 0) {
+    <div class="editor-empty">
+      <div class="editor-empty-icon">👆</div>
+      Hacé click en una carta del catálogo para agregarla al mazo.
+    </div>
+  } @else {
+    <ul class="entry-list">
+      @for (entry of entries(); track trackByCardId($index, entry)) {
+        <li class="entry">
+          <span
+            class="entry-type-dot"
+            [style.background]="entry.card.cardType === 'POKEMON' ? '#66BB6A' : entry.card.cardType === 'ENERGY' ? '#FFD54F' : '#4FC3F7'"
+          ></span>
+          @if (entry.card.imageUrl) {
+            <img [src]="entry.card.imageUrl" [alt]="entry.card.name" class="entry-img" (click)="showDetail(entry.card)" />
+          }
+          <span class="entry-name" (click)="showDetail(entry.card)">{{ entry.card.name }}</span>
+          <div class="entry-controls">
+            <button class="qty-btn" (click)="removeOne(entry.card)">−</button>
+            <span class="qty-value">{{ entry.quantity }}</span>
+            <button class="qty-btn" (click)="addOne(entry.card)" [disabled]="entry.quantity >= MAX_COPIES">+</button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

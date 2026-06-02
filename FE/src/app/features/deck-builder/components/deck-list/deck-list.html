@@ -1,0 +1,23 @@
+@for (deck of decks(); track trackById($index, deck)) {
+  <div class="deck-card" (click)="select(deck)">
+    <div class="deck-card__pokeball"></div>
+    <div class="deck-card__body">
+      <div class="deck-card__name">{{ deck.name }}</div>
+      @if (deck.description) {
+        <div class="deck-card__desc">{{ deck.description }}</div>
+      }
+      <div class="deck-card__meta">
+        <span class="deck-card__count">{{ deck.totalCards }} / 60 cartas</span>
+        @if (deck.valid) {
+          <span class="deck-card__badge deck-card__badge--valid">✓ Válido</span>
+        } @else {
+          <span class="deck-card__badge deck-card__badge--invalid">⚠ Incompleto</span>
+        }
+      </div>
+      <div class="deck-card__bar">
+        <div class="deck-card__bar-fill" [style.width.%]="(deck.totalCards / 60) * 100"></div>
+      </div>
+    </div>
+    <button class="deck-card__delete" (click)="delete(deck, $event)" title="Eliminar mazo">✕</button>
+  </div>
+}

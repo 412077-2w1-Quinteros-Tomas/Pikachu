@@ -1,0 +1,111 @@
+:host { display: contents; }
+
+.deck-card {
+  position: relative;
+  background: var(--poke-surface);
+  border: 1px solid var(--poke-border);
+  border-radius: var(--radius);
+  padding: 18px 18px 18px 22px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.deck-card:hover {
+  border-color: rgba(255,203,5,0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Pokeball decoration */
+.deck-card__pokeball {
+  position: absolute;
+  right: -28px;
+  top: -28px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 10px solid rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+
+.deck-card__body { position: relative; }
+
+.deck-card__name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  padding-right: 28px;
+}
+
+.deck-card__desc {
+  font-size: 12px;
+  color: var(--poke-muted);
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.deck-card__count {
+  font-size: 12px;
+  color: var(--poke-muted);
+}
+
+.deck-card__badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.deck-card__badge--valid {
+  background: rgba(76,175,80,0.15);
+  color: #81c784;
+}
+
+.deck-card__badge--invalid {
+  background: rgba(255,152,0,0.15);
+  color: #ffb74d;
+}
+
+.deck-card__bar {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.deck-card__bar-fill {
+  height: 100%;
+  background: var(--poke-yellow);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.deck-card__delete {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.2);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  z-index: 1;
+  transition: color 0.15s, background 0.15s;
+}
+
+.deck-card__delete:hover {
+  color: var(--poke-error);
+  background: rgba(244,67,54,0.1);
+}

@@ -1,0 +1,41 @@
+<div class="catalog">
+  <div class="catalog-filters">
+    <input
+      type="text"
+      placeholder="Buscar carta..."
+      [ngModel]="nameFilter()"
+      (ngModelChange)="nameFilter.set($event)"
+      class="filter-input"
+    />
+    <select [ngModel]="typeFilter()" (ngModelChange)="typeFilter.set($event)" class="filter-select">
+      <option value="">Todos</option>
+      @for (t of cardTypes; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+    <select [ngModel]="stageFilter()" (ngModelChange)="stageFilter.set($event)" class="filter-select">
+      <option value="">Fase</option>
+      @for (s of pokemonStages; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading()) {
+    <div class="catalog-loading">Cargando cartas...</div>
+  } @else {
+    <div class="catalog-meta">{{ filteredCards().length }} cartas</div>
+    <div class="catalog-grid">
+      @for (card of filteredCards(); track trackById($index, card)) {
+        <div class="catalog-card" (click)="select(card)" [title]="card.name">
+          @if (card.imageUrl) {
+            <img [src]="card.imageUrl" [alt]="card.name" class="card-img" loading="lazy" />
+          } @else {
+            <div class="card-placeholder">{{ card.name }}</div>
+          }
+          <div class="card-name">{{ card.name }}</div>
+        </div>
+      }
+    </div>
+  }
+</div>

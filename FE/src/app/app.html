@@ -1,0 +1,18 @@
+<nav class="app-nav">
+  <a class="app-nav__brand" routerLink="/">
+    <span class="app-nav__ball">⬤</span>
+    <span class="app-nav__title">Pokémon TCG</span>
+  </a>
+  <div class="app-nav__links">
+    <a class="app-nav__link" routerLink="/" routerLinkActive="app-nav__link--active" [routerLinkActiveOptions]="{exact:true}">
+      Pokédex
+    </a>
+    <a class="app-nav__link" routerLink="/deck-builder" routerLinkActive="app-nav__link--active">
+      Mazo Builder
+    </a>
+  </div>
+</nav>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>

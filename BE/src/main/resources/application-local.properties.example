@@ -1,0 +1,6 @@
+# Copiar este archivo como application-local.properties y completar los valores.
+# application-local.properties está en .gitignore — nunca commitear el archivo real.
+
+## PokemonTCG API ##
+# Obtener clave en: https://dev.pokemontcg.io/
+POKEMONTCG_API_KEY=tu_api_key_aqui

@@ -1,0 +1,62 @@
+<div class="modal-backdrop" (click)="onBackdrop($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="close()">✕</button>
+
+    <div class="modal-body">
+      @if (card().imageUrl) {
+        <img [src]="card().imageUrl" [alt]="card().name" class="modal-img" />
+      }
+
+      <div class="modal-info">
+        <h2 class="card-title">{{ card().name }}</h2>
+
+        <div class="info-pills">
+          <span class="pill">{{ card().cardType }}</span>
+          @if (card().hp) {
+            <span class="pill pill--hp">{{ card().hp }} HP</span>
+          }
+          @if (card().stage) {
+            <span class="pill pill--stage">{{ card().stage }}</span>
+          }
+          @for (t of card().types; track t) {
+            <span class="pill pill--type">{{ t }}</span>
+          }
+          @if (card().rarity) {
+            <span class="pill">{{ card().rarity }}</span>
+          }
+        </div>
+
+        @if (card().attacks?.length) {
+          <div>
+            <div class="section-title">Ataques</div>
+            @for (attack of card().attacks; track attack.name) {
+              <div class="attack">
+                <div class="attack-header">
+                  <span class="attack-name">{{ attack.name }}</span>
+                  @if (attack.damage) { <span class="attack-damage">{{ attack.damage }}</span> }
+                </div>
+                @if (attack.effect) {
+                  <p class="attack-effect">{{ attack.effect }}</p>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (card().abilities?.length) {
+          <div>
+            <div class="section-title">Habilidades</div>
+            @for (ability of card().abilities; track ability.name) {
+              <div class="ability">
+                <div class="ability-name">{{ ability.name }}</div>
+                <p class="ability-effect">{{ ability.effect }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <button class="add-btn" (click)="add()">+ Agregar al mazo</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+.editor { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.editor-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--poke-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.card-count {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--poke-error);
+  transition: color 0.3s;
+}
+.card-count.complete { color: var(--poke-success); }
+
+.count-label { font-size: 12px; color: var(--poke-muted); }
+
+.editor-empty {
+  text-align: center;
+  color: var(--poke-muted);
+  padding: 48px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.editor-empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+.entry-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.1s;
+}
+.entry:hover { background: rgba(255,255,255,0.03); }
+
+.entry-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.entry-img {
+  width: 32px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.entry-name {
+  flex: 1;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--poke-text);
+}
+.entry-name:hover { color: var(--poke-yellow); }
+
+.entry-controls { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+.qty-btn {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--poke-surface2);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--poke-text);
+  transition: background 0.1s;
+}
+.qty-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+.qty-btn:disabled { opacity: 0.3; cursor: default; }
+
+.qty-value {
+  width: 24px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--poke-yellow);
+}

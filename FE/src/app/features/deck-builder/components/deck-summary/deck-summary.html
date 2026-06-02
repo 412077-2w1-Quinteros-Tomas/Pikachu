@@ -1,0 +1,40 @@
+<div class="summary">
+
+  <div class="summary-count-row">
+    <span class="summary-count" [class.complete]="isComplete()">{{ totalCards() }}</span>
+    <span class="summary-count-label">/ {{ DECK_SIZE }}</span>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-bar-fill" [style.width.%]="progress()"></div>
+  </div>
+
+  <div class="summary-status">
+    @if (isValid()) {
+      <span class="status-badge valid">✓ Mazo válido</span>
+    } @else {
+      <span class="status-badge invalid">✗ Incompleto</span>
+    }
+  </div>
+
+  <div class="rules-list">
+    @for (rule of rules(); track rule.label) {
+      <div class="rule" [class.rule--pass]="rule.passed" [class.rule--fail]="!rule.passed">
+        <span class="rule-icon">{{ rule.passed ? '✓' : '✗' }}</span>
+        <span class="rule-label">{{ rule.label }}</span>
+      </div>
+    }
+  </div>
+
+  @if (typeCounts().length > 0) {
+    <div class="type-breakdown">
+      @for (tc of typeCounts(); track tc.type) {
+        <div class="type-row">
+          <span class="type-dot" [style.background]="tc.color"></span>
+          <span class="type-label">{{ tc.label }}</span>
+          <span class="type-count">{{ tc.count }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>
