@@ -1,1 +1,40 @@
+@if (matches().length === 0) {
+  <div class="ml-empty">
+    <div class="ml-empty-icon">🎮</div>
+    <p>No hay partidas disponibles.</p>
+    <p class="ml-empty-hint">¡Creá la primera!</p>
+  </div>
+} @else {
+  <div class="ml-grid">
+    @for (match of matches(); track trackById($index, match)) {
+      <div class="ml-card" [class.ml-card--waiting]="match.status === 'WAITING'" [class.ml-card--active]="match.status === 'IN_PROGRESS'">
+        <div class="ml-card__header">
+          <span class="ml-card__name">{{ match.name }}</span>
+          <span class="ml-status" [class.ml-status--waiting]="match.status === 'WAITING'" [class.ml-status--active]="match.status === 'IN_PROGRESS'" [class.ml-status--done]="match.status === 'FINISHED'">
+            {{ statusLabel(match.status) }}
+          </span>
+        </div>
 
+        <div class="ml-card__players">
+          <div class="ml-player ml-player--p1">
+            <span class="ml-player__icon">👤</span>
+            <span class="ml-player__name">{{ match.player1 }}</span>
+          </div>
+          <span class="ml-vs">VS</span>
+          <div class="ml-player ml-player--p2">
+            @if (match.player2) {
+              <span class="ml-player__icon">👤</span>
+              <span class="ml-player__name">{{ match.player2 }}</span>
+            } @else {
+              <span class="ml-player__empty">???</span>
+            }
+          </div>
+        </div>
+
+        @if (canJoin(match)) {
+          <button class="ml-join-btn" (click)="join(match)">⚔️ Unirse</button>
+        }
+      </div>
+    }
+  </div>
+}

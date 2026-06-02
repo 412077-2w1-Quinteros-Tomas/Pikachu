@@ -1,1 +1,54 @@
+<div class="dialog-backdrop" (click)="cancel()">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2 class="dialog-title">Nueva partida</h2>
+      <button class="dialog-close" (click)="cancel()">✕</button>
+    </div>
 
+    <div class="dialog-body">
+      <div class="field">
+        <label class="field-label">Nombre de la partida</label>
+        <input
+          type="text"
+          class="field-input"
+          placeholder="ej: Batalla épica"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field-label">Tu nombre de jugador</label>
+        <input
+          type="text"
+          class="field-input"
+          [value]="playerName()"
+          readonly
+        />
+      </div>
+
+      @if (decks().length > 0) {
+        <div class="field">
+          <label class="field-label">Mazo (opcional)</label>
+          <select class="field-select" [ngModel]="selectedDeckId()" (ngModelChange)="selectedDeckId.set($event)">
+            <option value="">Sin mazo seleccionado</option>
+            @for (deck of decks(); track deck.id) {
+              <option [value]="deck.id">{{ deck.name }} ({{ deck.totalCards }}/60)</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (error()) {
+        <p class="dialog-error">{{ error() }}</p>
+      }
+    </div>
+
+    <div class="dialog-footer">
+      <button class="btn-secondary" (click)="cancel()">Cancelar</button>
+      <button class="btn-primary" (click)="submit()" [disabled]="saving()">
+        {{ saving() ? 'Creando...' : '🎮 Crear partida' }}
+      </button>
+    </div>
+  </div>
+</div>

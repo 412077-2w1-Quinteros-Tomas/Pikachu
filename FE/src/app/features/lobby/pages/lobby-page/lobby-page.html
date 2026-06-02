@@ -1,1 +1,91 @@
+<div class="lobby">
 
+  <!-- Player name bar -->
+  <div class="player-bar">
+    @if (editingName()) {
+      <div class="player-edit">
+        <span class="player-bar__label">Tu nombre:</span>
+        <input
+          type="text"
+          class="player-input"
+          placeholder="Ingresá tu nombre..."
+          [ngModel]="nameInput()"
+          (ngModelChange)="nameInput.set($event)"
+          (keydown.enter)="saveName()"
+          autofocus
+        />
+        <button class="btn-yellow" (click)="saveName()">Listo</button>
+      </div>
+    } @else {
+      <div class="player-info">
+        <span class="player-avatar">👤</span>
+        <span class="player-name">{{ playerName() }}</span>
+        <button class="btn-ghost" (click)="editingName.set(true)">Cambiar</button>
+      </div>
+    }
+  </div>
+
+  <!-- Header -->
+  <div class="lobby-header">
+    <div>
+      <h1 class="lobby-title">Lobby</h1>
+      <p class="lobby-subtitle">Partidas disponibles · se actualiza cada 5 seg.</p>
+    </div>
+    <button class="btn-yellow" (click)="openCreate()">+ Nueva partida</button>
+  </div>
+
+  @if (error()) {
+    <div class="lobby-error">{{ error() }}</div>
+  }
+
+  <!-- Match list -->
+  <div class="lobby-content">
+    <app-match-list
+      [matches]="matches()"
+      [currentPlayer]="playerName()"
+      (matchJoined)="openJoin($event)"
+    />
+  </div>
+
+  <!-- Create dialog -->
+  @if (showCreate()) {
+    <app-create-match-dialog
+      [decks]="decks()"
+      [playerName]="playerName()"
+      [saving]="saving()"
+      (matchCreated)="onMatchCreated($event)"
+      (cancelled)="showCreate.set(false)"
+    />
+  }
+
+  <!-- Join dialog -->
+  @if (showJoinDialog() && joiningMatch()) {
+    <div class="join-backdrop" (click)="showJoinDialog.set(false)">
+      <div class="join-dialog" (click)="$event.stopPropagation()">
+        <h2 class="join-title">Unirse a "{{ joiningMatch()!.name }}"</h2>
+        <p class="join-vs">
+          <strong>{{ joiningMatch()!.player1 }}</strong> vs <strong>{{ playerName() }}</strong>
+        </p>
+
+        @if (decks().length > 0) {
+          <div class="field">
+            <label class="field-label">Tu mazo (opcional)</label>
+            <select class="field-select" [ngModel]="joinDeckId()" (ngModelChange)="joinDeckId.set($event)">
+              <option value="">Sin mazo</option>
+              @for (deck of decks(); track deck.id) {
+                <option [value]="deck.id">{{ deck.name }}</option>
+              }
+            </select>
+          </div>
+        }
+
+        <div class="join-actions">
+          <button class="btn-ghost" (click)="showJoinDialog.set(false)">Cancelar</button>
+          <button class="btn-yellow" (click)="confirmJoin()" [disabled]="saving()">
+            {{ saving() ? 'Uniéndose...' : '⚔️ Confirmar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
