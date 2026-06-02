@@ -1,9 +1,12 @@
 package ar.edu.utn.frc.tup.piii.websocket;
 
+import ar.edu.utn.frc.tup.piii.engine.GameEngine;
+import ar.edu.utn.frc.tup.piii.engine.models.MatchSnapshot;
 import ar.edu.utn.frc.tup.piii.websocket.messages.GameActionMessage;
 import ar.edu.utn.frc.tup.piii.websocket.messages.GameStateUpdateMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -13,14 +16,21 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
-@RequiredArgsConstructor
 public class GameWebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper;
+    private final GameEngine gameEngine;
+
+    @Autowired
+    public GameWebSocketHandler(ObjectMapper objectMapper, @Lazy GameEngine gameEngine) {
+        this.objectMapper = objectMapper;
+        this.gameEngine = gameEngine;
+    }
 
     /** matchId → connected sessions */
     private final Map<String, List<WebSocketSession>> rooms = new ConcurrentHashMap<>();
@@ -39,20 +49,35 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
         session.getAttributes().put("matchId", matchId);
         session.getAttributes().put("playerId", playerId);
 
+        int roomSize = rooms.get(matchId).size();
         broadcast(matchId, new GameStateUpdateMessage("PLAYER_CONNECTED", matchId, Map.of(
                 "playerId", playerId != null ? playerId : "unknown",
-                "playerCount", rooms.get(matchId).size())));
+                "playerCount", roomSize)));
+
+        if (roomSize >= 2) {
+            try {
+                MatchSnapshot snapshot = gameEngine.initializeGame(UUID.fromString(matchId));
+                broadcast(matchId, new GameStateUpdateMessage("GAME_STARTED", matchId, snapshot));
+            } catch (Exception e) {
+                broadcast(matchId, new GameStateUpdateMessage("ERROR", matchId,
+                        Map.of("message", "Failed to initialize game: " + e.getMessage())));
+            }
+        }
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         GameActionMessage action = objectMapper.readValue(message.getPayload(), GameActionMessage.class);
         String matchId = (String) session.getAttributes().get("matchId");
+        if (matchId == null) return;
 
-        broadcast(matchId, new GameStateUpdateMessage("STATE_UPDATE", matchId, Map.of(
-                "actionType", action.getActionType() != null ? action.getActionType() : "",
-                "playerId", action.getPlayerId() != null ? action.getPlayerId() : "",
-                "payload", action.getPayload() != null ? action.getPayload() : Map.of())));
+        try {
+            MatchSnapshot snapshot = gameEngine.processAction(UUID.fromString(matchId), action);
+            broadcast(matchId, new GameStateUpdateMessage("STATE_UPDATE", matchId, snapshot));
+        } catch (Exception e) {
+            broadcast(matchId, new GameStateUpdateMessage("ERROR", matchId,
+                    Map.of("message", e.getMessage() != null ? e.getMessage() : "Unknown error")));
+        }
     }
 
     @Override

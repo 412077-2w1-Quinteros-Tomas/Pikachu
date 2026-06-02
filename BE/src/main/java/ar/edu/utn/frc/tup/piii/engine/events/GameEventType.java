@@ -1,3 +1,20 @@
 package ar.edu.utn.frc.tup.piii.engine.events;
 
-public enum GameEventType {}
+public enum GameEventType {
+    GAME_STARTED,
+    SETUP_COMPLETE,
+    TURN_STARTED,
+    TURN_ENDED,
+    CARD_DRAWN,
+    CARD_PLAYED,
+    POKEMON_PLACED,
+    ENERGY_ATTACHED,
+    ATTACK_PERFORMED,
+    DAMAGE_DEALT,
+    POKEMON_KO,
+    PRIZE_TAKEN,
+    STATUS_APPLIED,
+    STATUS_REMOVED,
+    PLAYER_RETREATED,
+    GAME_OVER
+}
