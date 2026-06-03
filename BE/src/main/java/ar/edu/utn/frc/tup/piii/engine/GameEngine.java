@@ -85,6 +85,7 @@ public class GameEngine {
         return MatchSnapshot.of(matchId.toString(), board, publisher.drain());
     }
 
+    @Transactional
     public MatchSnapshot processAction(UUID matchId, GameActionMessage action) {
         GameBoard board = loadBoard(matchId);
         if (board == null) {
