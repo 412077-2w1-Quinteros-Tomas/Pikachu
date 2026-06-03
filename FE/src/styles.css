@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --poke-bg:       #0d0d1a;
+  --poke-surface:  #161628;
+  --poke-surface2: #1e1e35;
+  --poke-border:   rgba(255,203,5,0.12);
+  --poke-yellow:   #FFCB05;
+  --poke-red:      #CC0000;
+  --poke-blue:     #1a6fc4;
+  --poke-text:     #f0f0ff;
+  --poke-muted:    #7a8099;
+  --poke-success:  #4caf50;
+  --poke-error:    #f44336;
+  --radius:        10px;
+  --radius-sm:     6px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--poke-bg);
+  color: var(--poke-text);
+  min-height: 100vh;
+}

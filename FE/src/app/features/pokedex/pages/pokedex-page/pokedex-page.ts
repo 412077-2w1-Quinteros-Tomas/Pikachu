@@ -35,11 +35,14 @@ export class PokedexPage {
   loading      = signal(false);
   error        = signal<string | null>(null);
 
+  private readonly refreshTick = signal(0);
+
   private readonly filter = computed(() => ({
     name:     this.nameFilter()     || undefined,
     cardType: (this.cardTypeFilter() || undefined) as CardType | undefined,
     stage:    (this.stageFilter()    || undefined) as PokemonStage | undefined,
     size:     100,
+    _tick:    this.refreshTick(),
   }));
 
   readonly cards = toSignal(
@@ -76,7 +79,7 @@ export class PokedexPage {
     this.cardService.syncSet('xy1').subscribe({
       next: () => {
         this.loading.set(false);
-        this.nameFilter.set(this.nameFilter()); // fuerza recarga del grid
+        this.refreshTick.update(n => n + 1);
       },
       error: err => {
         this.error.set(err.message ?? 'Error al sincronizar');

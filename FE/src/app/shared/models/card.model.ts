@@ -45,4 +45,5 @@ export interface CardFilter {
   setId?: string;
   page?: number;
   size?: number;
+  _tick?: number;
 }
