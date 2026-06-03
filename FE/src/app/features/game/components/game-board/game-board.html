@@ -1,5 +1,9 @@
 <app-notification-toast [events]="gameState.snapshot()?.events ?? []" />
 
+@if (gameState.error() && !gameState.board()) {
+  <div class="board-error-full">⚠️ {{ gameState.error() }}</div>
+}
+
 @if (!gameState.connected()) {
   <app-setup-phase message="Conectando al juego..." />
 } @else if (gameState.phase() === 'WAITING' || gameState.phase() === 'SETUP') {
