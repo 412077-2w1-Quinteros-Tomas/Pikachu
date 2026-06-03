@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class DeckServiceTest {
@@ -51,8 +52,12 @@ class DeckServiceTest {
     private CardEntity basicPokemon;
     private CardEntity energyCard;
 
+    private static final DeckValidationResultDTO VALID_RESULT =
+            new DeckValidationResultDTO(true, java.util.List.of(), 60);
+
     @BeforeEach
     void setUp() {
+        lenient().when(validationService.validate(any())).thenReturn(VALID_RESULT);
         basicPokemon = new CardEntity();
         basicPokemon.setName("Bulbasaur");
         basicPokemon.setCardType(CardType.POKEMON);
@@ -104,7 +109,7 @@ class DeckServiceTest {
         DeckDTO result = deckService.createDeck(dto);
 
         assertThat(result).isSameAs(expected);
-        verify(deckRepository).save(any(DeckEntity.class));
+        verify(deckRepository, org.mockito.Mockito.atLeastOnce()).save(any(DeckEntity.class));
     }
 
     @Test

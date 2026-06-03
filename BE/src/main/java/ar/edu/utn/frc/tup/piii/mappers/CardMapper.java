@@ -20,7 +20,7 @@ public class CardMapper {
 
     public CardDTO toDto(CardEntity entity) {
         CardDTO dto = new CardDTO();
-        dto.setId(entity.getId().toString());
+        dto.setId(entity.getId() != null ? entity.getId().toString() : null);
         dto.setExternalId(entity.getExternalId());
         dto.setName(entity.getName());
         dto.setCardType(entity.getCardType());

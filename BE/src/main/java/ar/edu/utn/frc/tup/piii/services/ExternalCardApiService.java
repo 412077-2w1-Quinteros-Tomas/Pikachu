@@ -23,7 +23,7 @@ public class ExternalCardApiService {
 
     private static final int PAGE_SIZE = 250;
 
-    @Value("${pokemontcg.api.base-url}")
+    @Value("${pokemontcg.api.base-url:https://api.pokemontcg.io/v2}")
     private String baseUrl;
 
     @Value("${pokemontcg.api.key:}")
