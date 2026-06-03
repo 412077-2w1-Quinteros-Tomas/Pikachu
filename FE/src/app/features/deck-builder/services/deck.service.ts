@@ -34,4 +34,8 @@ export class DeckService {
   validateDeck(id: string): Observable<DeckValidationResult> {
     return this.http.post<DeckValidationResult>(`${API_BASE}/${id}/validate`, {});
   }
+
+  seedTemplates(): Observable<{ created: number; message: string }> {
+    return this.http.post<{ created: number; message: string }>(`${API_BASE}/seed-templates`, {});
+  }
 }

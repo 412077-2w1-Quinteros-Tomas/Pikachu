@@ -4,6 +4,7 @@ import ar.edu.utn.frc.tup.piii.dtos.deck.CreateDeckDTO;
 import ar.edu.utn.frc.tup.piii.dtos.deck.DeckDTO;
 import ar.edu.utn.frc.tup.piii.dtos.deck.DeckValidationResultDTO;
 import ar.edu.utn.frc.tup.piii.services.DeckService;
+import ar.edu.utn.frc.tup.piii.services.DeckTemplateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class DeckController {
 
     private final DeckService deckService;
+    private final DeckTemplateService deckTemplateService;
 
     @GetMapping
     public ResponseEntity<List<DeckDTO>> getAllDecks() {
@@ -56,5 +58,14 @@ public class DeckController {
     @PostMapping("/{id}/validate")
     public ResponseEntity<DeckValidationResultDTO> validateDeck(@PathVariable UUID id) {
         return ResponseEntity.ok(deckService.validateDeck(id));
+    }
+
+    @PostMapping("/seed-templates")
+    public ResponseEntity<java.util.Map<String, Object>> seedTemplates() {
+        int created = deckTemplateService.seedAllTemplates();
+        return ResponseEntity.ok(java.util.Map.of(
+                "created", created,
+                "message", created > 0 ? "Mazos temáticos creados: " + created : "Los mazos ya existen"
+        ));
     }
 }

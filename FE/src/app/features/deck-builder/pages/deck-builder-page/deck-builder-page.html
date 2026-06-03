@@ -4,8 +4,17 @@
     <div class="list-view">
       <div class="list-header">
         <h1 class="list-title">Mis Mazos</h1>
-        <button class="btn-primary" (click)="newDeck()">+ Nuevo mazo</button>
+        <div class="list-header__actions">
+          <button class="btn-epic" (click)="seedTemplates()" [disabled]="seedingTemplates()">
+            {{ seedingTemplates() ? '⏳ Creando...' : '🎮 Mazos Épicos' }}
+          </button>
+          <button class="btn-primary" (click)="newDeck()">+ Nuevo mazo</button>
+        </div>
       </div>
+
+      @if (seedMessage()) {
+        <div class="seed-msg">✅ {{ seedMessage() }}</div>
+      }
 
       @if (loading()) {
         <div class="list-empty"><p>Cargando mazos...</p></div>
@@ -13,15 +22,22 @@
         <div class="list-empty">
           <div class="list-empty-icon">🃏</div>
           <p>Todavía no tenés mazos.</p>
-          <p class="list-empty-hint">Creá tu primer mazo para jugar.</p>
+          <p class="list-empty-hint">Usá <strong>🎮 Mazos Épicos</strong> para crear 4 mazos temáticos, o creá el tuyo.</p>
         </div>
       } @else {
         <div class="deck-cards-grid">
-          <app-deck-list
-            [decks]="decks()"
-            (deckSelected)="editDeck($event)"
-            (deckDeleted)="deleteDeck($event)"
-          />
+          @for (deck of decks(); track deck.id) {
+            <div class="deck-wrapper" [class.deck-wrapper--epic]="isTemplateDeck(deck)">
+              @if (isTemplateDeck(deck)) {
+                <div class="epic-badge">🎮 Épico</div>
+              }
+              <app-deck-list
+                [decks]="[deck]"
+                (deckSelected)="editDeck($event)"
+                (deckDeleted)="deleteDeck($event)"
+              />
+            </div>
+          }
         </div>
       }
     </div>

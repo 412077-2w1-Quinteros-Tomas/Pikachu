@@ -30,6 +30,8 @@ export class DeckBuilderPage {
   private readonly deckService = inject(DeckService);
 
   readonly view = signal<PageView>('list');
+  readonly seedingTemplates = signal(false);
+  readonly seedMessage = signal<string | null>(null);
   readonly decks = signal<DeckModel[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
@@ -116,6 +118,27 @@ export class DeckBuilderPage {
   cancelEdit(): void {
     this.view.set('list');
     this.error.set(null);
+  }
+
+  seedTemplates(): void {
+    this.seedingTemplates.set(true);
+    this.seedMessage.set(null);
+    this.deckService.seedTemplates().subscribe({
+      next: res => {
+        this.seedingTemplates.set(false);
+        this.seedMessage.set(res.message);
+        this.loadDecks();
+        setTimeout(() => this.seedMessage.set(null), 4000);
+      },
+      error: () => {
+        this.seedingTemplates.set(false);
+        this.seedMessage.set('Error al crear los mazos.');
+      }
+    });
+  }
+
+  isTemplateDeck(deck: DeckModel): boolean {
+    return deck.description?.startsWith('🎮') ?? false;
   }
 
   onCardSelected(card: CardModel): void {
