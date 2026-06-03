@@ -1,13 +1,26 @@
 <div class="bench">
-  <div class="bench__label">Banca</div>
+  <span class="bench__label">Banca</span>
   <div class="bench__slots">
     @for (slot of [0,1,2,3,4]; track slot) {
-      <div class="bench__slot" [class.clickable]="clickable() && !!bench()[slot]"
-           (click)="clickable() && bench()[slot] && benchSelected.emit(slot)">
+      <div class="bench__slot"
+           [class.bench__slot--target]="energyTargetMode() && !!bench()[slot]"
+           (click)="energyTargetMode() && bench()[slot] && benchSelected.emit(slot)">
         @if (bench()[slot]) {
-          <app-active-pokemon [pokemon]="bench()[slot]" label="Banca" />
+          <div class="bench-mini">
+            @if (bench()[slot].pokemon.imageUrl) {
+              <img class="bench-mini__img" [src]="bench()[slot].pokemon.imageUrl" [alt]="bench()[slot].pokemon.name" />
+            } @else {
+              <span class="bench-mini__noimg">🎴</span>
+            }
+            <div class="bench-mini__hpbar">
+              <div class="bench-mini__hpfill" [style.width.%]="hpPercent(bench()[slot])" [style.background]="hpColor(bench()[slot])"></div>
+            </div>
+            @if (energyTargetMode()) {
+              <div class="bench-mini__target-icon">⚡</div>
+            }
+          </div>
         } @else {
-          <div class="bench__empty">·</div>
+          <div class="bench-mini bench-mini--empty">·</div>
         }
       </div>
     }

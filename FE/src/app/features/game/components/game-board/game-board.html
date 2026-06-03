@@ -11,39 +11,56 @@
 } @else if (gameState.isFinished()) {
   <app-game-over [winner]="gameState.winner()" [myPlayerId]="playerId()" />
 } @else if (gameState.board()) {
-  <div class="game-board-layout">
-    <div class="turn-bar" [class.my-turn]="gameState.isMyTurn()">
-      @if (gameState.isMyTurn()) {
-        <span>🟡 Tu turno — Fase: {{ gameState.phase() }} — Turno {{ gameState.board()!.turnNumber }}</span>
-      } @else {
-        <span>⏳ Turno del oponente — Fase: {{ gameState.phase() }}</span>
+  <div class="game-board-layout" (click)="isEnergyMode() && $event.target === $event.currentTarget && cancelEnergyMode()">
+
+    <!-- Turn bar -->
+    <div class="turn-bar" [class.turn-bar--mine]="gameState.isMyTurn()">
+      <div class="turn-bar__text">
+        @if (gameState.isMyTurn()) {
+          <span class="turn-dot turn-dot--active"></span>
+          Tu Turno · Turno {{ gameState.board()!.turnNumber }} · {{ gameState.phase() }}
+        } @else {
+          <span class="turn-dot turn-dot--wait"></span>
+          Turno del oponente · {{ gameState.phase() }}
+        }
+      </div>
+      @if (isEnergyMode()) {
+        <div class="energy-mode-hint">⚡ Elegí un Pokémon para adjuntar la energía — <button class="cancel-link" (click)="cancelEnergyMode()">Cancelar</button></div>
       }
       @if (gameState.error()) {
         <span class="board-error">⚠️ {{ gameState.error() }}</span>
       }
     </div>
 
+    <!-- Opponent area -->
     <app-opponent-area [board]="gameState.opponentBoard()" />
 
+    <!-- Field divider -->
     <div class="field-divider">
-      <span class="field-label">Campo de Batalla</span>
+      <div class="field-line"></div>
+      <span class="field-label">⚔️ Campo de Batalla ⚔️</span>
+      <div class="field-line"></div>
     </div>
 
+    <!-- Player area -->
     <app-player-area
       [board]="gameState.myBoard()"
       [isMyTurn]="gameState.isMyTurn()"
-      (benchSelected)="onRetreat($event)"
+      [energyMode]="isEnergyMode()"
+      (activeSelected)="onActiveTargetSelected()"
+      (benchSelected)="isEnergyMode() ? onBenchTargetSelected($event) : onRetreat($event)"
     />
 
+    <!-- Hand -->
     <app-hand-area
       [hand]="gameState.myBoard()?.hand ?? []"
       [isMyTurn]="gameState.isMyTurn()"
       [canPlayEnergy]="canPlayEnergy()"
-      [availableTargets]="allTargets()"
       (cardPlayed)="onPlayCard($event)"
-      (energyAttached)="onAttachEnergy($event)"
+      (energyCardSelected)="onEnergyCardSelected($event)"
     />
 
+    <!-- Actions -->
     <app-action-panel
       [board]="gameState.myBoard()"
       [isMyTurn]="gameState.isMyTurn()"

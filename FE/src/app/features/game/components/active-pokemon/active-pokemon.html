@@ -1,31 +1,54 @@
 @if (pokemon()) {
-  <div class="active-poke" [class.clickable]="clickable()" (click)="clickable() && selected.emit()">
-    <div class="active-poke__label">{{ label() }}</div>
-    @if (pokemon()!.pokemon.imageUrl) {
-      <img class="active-poke__img" [src]="pokemon()!.pokemon.imageUrl" [alt]="pokemon()!.pokemon.name" />
-    } @else {
-      <div class="active-poke__placeholder">🎴</div>
-    }
-    <div class="active-poke__name">{{ pokemon()!.pokemon.name }}</div>
-    @if (conditionLabel) {
-      <div class="active-poke__condition">{{ conditionLabel }}</div>
-    }
-    <div class="active-poke__hp-bar">
-      <div class="active-poke__hp-fill" [style.width.%]="hpPercent" [style.background]="hpColor"></div>
+  <div class="poke-card"
+       [class.poke-card--energy-target]="energyTargetMode()"
+       (click)="energyTargetMode() && selected.emit()">
+
+    <div class="poke-card__label">{{ label() }}</div>
+
+    <div class="poke-card__art">
+      @if (pokemon()!.pokemon.imageUrl) {
+        <img [src]="pokemon()!.pokemon.imageUrl" [alt]="pokemon()!.pokemon.name" class="poke-card__img" />
+      } @else {
+        <div class="poke-card__noimg">
+          <span class="poke-card__emoji">🎴</span>
+          <span class="poke-card__noimg-name">{{ pokemon()!.pokemon.name }}</span>
+        </div>
+      }
+
+      @if (conditionLabel) {
+        <div class="poke-card__condition">{{ conditionLabel }}</div>
+      }
+
+      @if (energyTargetMode()) {
+        <div class="poke-card__energy-overlay">⚡ Adjuntar</div>
+      }
     </div>
-    <div class="active-poke__hp-text">{{ pokemon()!.currentHp }} / {{ pokemon()!.pokemon.hp }} HP</div>
+
+    <div class="poke-card__footer">
+      <span class="poke-card__name">{{ pokemon()!.pokemon.name }}</span>
+      <span class="poke-card__hp" [style.color]="hpColor">{{ pokemon()!.currentHp }}/{{ pokemon()!.pokemon.hp }}</span>
+    </div>
+
+    <div class="poke-card__hpbar">
+      <div class="poke-card__hpfill" [style.width.%]="hpPercent" [style.background]="hpColor"></div>
+    </div>
+
     @if (pokemon()!.attachedEnergies.length > 0) {
-      <div class="active-poke__energies">
+      <div class="poke-card__energies">
         @for (e of pokemon()!.attachedEnergies; track $index) {
-          <span class="energy-dot" [title]="e.name">⚡</span>
+          <span class="poke-card__energy-badge"
+                [style.background]="energyColor(e.energyType)"
+                [title]="e.energyType">
+            {{ energyIcon(e.energyType) }}
+          </span>
         }
       </div>
     }
   </div>
 } @else {
-  <div class="active-poke active-poke--empty">
-    <div class="active-poke__label">{{ label() }}</div>
-    <div class="active-poke__placeholder">—</div>
-    <div class="active-poke__empty-text">Sin Pokémon</div>
+  <div class="poke-card poke-card--empty">
+    <div class="poke-card__label">{{ label() }}</div>
+    <div class="poke-card__empty-icon">🫙</div>
+    <div class="poke-card__empty-text">Sin Pokémon</div>
   </div>
 }

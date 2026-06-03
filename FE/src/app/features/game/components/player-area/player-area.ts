@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
-import { PlayerBoard, PokemonInPlay } from '../../../../shared/models/game.model';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { PlayerBoard } from '../../../../shared/models/game.model';
 import { ActivePokemonComponent } from '../active-pokemon/active-pokemon';
 import { BenchAreaComponent } from '../bench-area/bench-area';
 import { PrizeCardsComponent } from '../prize-cards/prize-cards';
@@ -17,15 +17,8 @@ import { DiscardPileComponent } from '../discard-pile/discard-pile';
 export class PlayerAreaComponent {
   readonly board = input<PlayerBoard | null>(null);
   readonly isMyTurn = input<boolean>(false);
+  readonly energyMode = input<boolean>(false);
 
+  readonly activeSelected = output<void>();
   readonly benchSelected = output<number>();
-
-  get allTargets(): PokemonInPlay[] {
-    const b = this.board();
-    if (!b) return [];
-    const list: PokemonInPlay[] = [];
-    if (b.activePokemon) list.push(b.activePokemon);
-    list.push(...(b.bench ?? []));
-    return list;
-  }
 }

@@ -1,15 +1,12 @@
 <div class="opponent-area">
-  <div class="opponent-area__header">
-    <span class="opponent-label">Oponente: {{ board()?.playerId }}</span>
-    <div class="opponent-area__stats">
-      <app-prize-cards [prizes]="board()?.prizeCards ?? []" [isOpponent]="true" />
-      <app-deck-pile [count]="board()?.deck?.length ?? 0" />
-      <app-discard-pile [count]="board()?.discardPile?.length ?? 0" />
-      <span class="hand-count">Mano: {{ board()?.hand?.length ?? 0 }}</span>
-    </div>
+  <div class="opponent-area__stats">
+    <span class="opp-label">Oponente: {{ board()?.playerId }}</span>
+    <app-prize-cards [prizes]="board()?.prizeCards ?? []" [isOpponent]="true" />
+    <app-deck-pile [count]="board()?.deck?.length ?? 0" />
+    <span class="hand-count">🃏 {{ board()?.hand?.length ?? 0 }}</span>
   </div>
   <div class="opponent-area__field">
     <app-bench-area [bench]="board()?.bench ?? []" />
-    <app-active-pokemon [pokemon]="board()?.activePokemon ?? null" label="Activo (Oponente)" />
+    <app-active-pokemon [pokemon]="board()?.activePokemon ?? null" label="Oponente Activo" />
   </div>
 </div>

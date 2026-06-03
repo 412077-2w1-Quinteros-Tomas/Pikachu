@@ -1,28 +1,47 @@
-@if (showEnergyModal()) {
-  <app-energy-attachment
-    [energies]="energyCards"
-    [targets]="availableTargets()"
-    (energyAttached)="onEnergyAttached($event)"
-    (cancelled)="showEnergyModal.set(false)"
-  />
-}
-
 <div class="hand-area">
-  <div class="hand-area__label">Mano ({{ hand().length }})</div>
+  <div class="hand-area__label">Tu mano ({{ hand().length }})</div>
   <div class="hand-area__cards">
     @for (card of hand(); track card.id) {
-      <div [class]="cardClass(card)"
-           [class.interactive]="isMyTurn()"
+      <div class="hand-card"
+           [class.hand-card--playable]="isPlayable(card)"
+           [class.hand-card--pokemon]="card.cardType === 'POKEMON'"
+           [class.hand-card--energy]="card.cardType === 'ENERGY'"
+           [class.hand-card--trainer]="card.cardType === 'TRAINER'"
            (click)="onCardClick(card)"
-           [title]="cardLabel(card)">
-        <span class="hand-card__type-icon">
-          @if (card.cardType === 'POKEMON') { 🎴 }
-          @else if (card.cardType === 'ENERGY') { ⚡ }
-          @else { 📜 }
-        </span>
-        <span class="hand-card__name">{{ card.name }}</span>
+           [title]="card.name">
+
         @if (card.cardType === 'POKEMON') {
-          <span class="hand-card__hp">{{ $any(card).hp }} HP</span>
+          <div class="hand-card__art">
+            @if (pokemonImg(card)) {
+              <img class="hand-card__img" [src]="pokemonImg(card)!" [alt]="card.name" />
+            } @else {
+              <span class="hand-card__fallback">🎴</span>
+            }
+          </div>
+          <div class="hand-card__info">
+            <span class="hand-card__name">{{ card.name }}</span>
+            @if (pokemonHp(card)) {
+              <span class="hand-card__hp">{{ pokemonHp(card) }}HP</span>
+            }
+          </div>
+        } @else if (card.cardType === 'ENERGY') {
+          <div class="hand-card__energy-art" [style.background]="energyBg(card)">
+            <span class="hand-card__energy-icon">{{ energyIcon(card) }}</span>
+          </div>
+          <div class="hand-card__info">
+            <span class="hand-card__name">{{ $any(card).energyType }}</span>
+          </div>
+        } @else {
+          <div class="hand-card__trainer-art">
+            <span class="hand-card__fallback">🃏</span>
+          </div>
+          <div class="hand-card__info">
+            <span class="hand-card__name">{{ card.name }}</span>
+          </div>
+        }
+
+        @if (isPlayable(card)) {
+          <div class="hand-card__playable-ring"></div>
         }
       </div>
     }

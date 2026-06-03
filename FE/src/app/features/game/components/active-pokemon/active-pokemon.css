@@ -1,90 +1,156 @@
 :host { display: block; }
 
-.active-poke {
-  width: 110px;
+.poke-card {
+  width: 130px;
   background: var(--poke-surface2);
-  border: 1px solid var(--poke-border);
-  border-radius: var(--radius);
-  padding: 8px;
+  border: 2px solid var(--poke-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.poke-card--energy-target {
+  cursor: pointer;
+  border-color: #ffdd00;
+  box-shadow: 0 0 16px rgba(255,221,0,0.6);
+  animation: pulse-target 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-target {
+  from { box-shadow: 0 0 8px rgba(255,221,0,0.4); }
+  to   { box-shadow: 0 0 20px rgba(255,221,0,0.9); }
+}
+
+.poke-card--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.35;
+  height: 140px;
+  border-style: dashed;
+}
+
+.poke-card__label {
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--poke-muted);
+  text-align: center;
+  padding: 4px 4px 0;
+}
+
+.poke-card__art {
+  position: relative;
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.poke-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.poke-card__noimg {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  text-align: center;
-  transition: border-color 0.15s;
 }
 
-.active-poke.clickable { cursor: pointer; }
-.active-poke.clickable:hover { border-color: var(--poke-yellow); }
-.active-poke--empty { opacity: 0.5; }
+.poke-card__emoji { font-size: 40px; }
 
-.active-poke__label {
+.poke-card__noimg-name {
+  font-size: 9px;
+  color: var(--poke-muted);
+  font-weight: 600;
+}
+
+.poke-card__condition {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.75);
+  border-radius: 6px;
+  padding: 2px 4px;
+  font-size: 9px;
+  color: #fff;
+}
+
+.poke-card__energy-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,221,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffdd00;
+  text-shadow: 0 1px 4px #000;
+}
+
+.poke-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px;
+  gap: 4px;
+}
+
+.poke-card__name {
   font-size: 9px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--poke-muted);
-}
-
-.active-poke__img {
-  width: 68px;
-  height: 68px;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.active-poke__placeholder {
-  font-size: 36px;
-  line-height: 1;
-  padding: 10px 0;
-}
-
-.active-poke__name {
-  font-size: 11px;
-  font-weight: 700;
   color: var(--poke-text);
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
 }
 
-.active-poke__condition {
-  font-size: 14px;
+.poke-card__hp {
+  font-size: 9px;
+  font-weight: 800;
+  flex-shrink: 0;
 }
 
-.active-poke__hp-bar {
-  width: 100%;
-  height: 4px;
+.poke-card__hpbar {
+  height: 3px;
   background: rgba(255,255,255,0.1);
-  border-radius: 2px;
   overflow: hidden;
 }
 
-.active-poke__hp-fill {
+.poke-card__hpfill {
   height: 100%;
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  transition: width 0.5s ease, background 0.5s;
 }
 
-.active-poke__hp-text {
-  font-size: 10px;
-  color: var(--poke-muted);
-}
-
-.active-poke__energies {
+.poke-card__energies {
   display: flex;
-  gap: 2px;
   flex-wrap: wrap;
-  justify-content: center;
+  gap: 2px;
+  padding: 3px 4px;
 }
 
-.energy-dot {
-  font-size: 10px;
-  cursor: default;
-}
-
-.active-poke__empty-text {
+.poke-card__energy-badge {
   font-size: 11px;
-  color: var(--poke-muted);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
+
+.poke-card__empty-icon { font-size: 28px; }
+.poke-card__empty-text { font-size: 9px; color: var(--poke-muted); }

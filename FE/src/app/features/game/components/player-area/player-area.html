@@ -1,12 +1,21 @@
 <div class="player-area">
   <div class="player-area__field">
-    <app-active-pokemon [pokemon]="board()?.activePokemon ?? null" label="Mi Activo" [clickable]="isMyTurn()" />
-    <app-bench-area [bench]="board()?.bench ?? []" [clickable]="isMyTurn()" (benchSelected)="benchSelected.emit($event)" />
+    <app-active-pokemon
+      [pokemon]="board()?.activePokemon ?? null"
+      label="Tu Activo"
+      [energyTargetMode]="energyMode()"
+      (selected)="activeSelected.emit()"
+    />
+    <app-bench-area
+      [bench]="board()?.bench ?? []"
+      [energyTargetMode]="energyMode()"
+      (benchSelected)="benchSelected.emit($event)"
+    />
   </div>
-  <div class="player-area__footer">
+  <div class="player-area__stats">
     <app-prize-cards [prizes]="board()?.prizeCards ?? []" />
     <app-deck-pile [count]="board()?.deck?.length ?? 0" />
     <app-discard-pile [count]="board()?.discardPile?.length ?? 0" />
-    <span class="player-label">Vos: {{ board()?.playerId }}</span>
+    <span class="player-id">{{ board()?.playerId }}</span>
   </div>
 </div>

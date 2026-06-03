@@ -1,31 +1,25 @@
 :host { display: block; }
 
 .opponent-area {
-  background: var(--poke-surface);
-  border-bottom: 1px solid var(--poke-border);
-  padding: 10px 16px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.opponent-area__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.opponent-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--poke-muted);
+  gap: 6px;
+  background: rgba(10, 15, 28, 0.6);
+  border-bottom: 1px solid var(--poke-border);
 }
 
 .opponent-area__stats {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.opp-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--poke-muted);
+  margin-right: auto;
 }
 
 .hand-count {
@@ -35,7 +29,6 @@
 
 .opponent-area__field {
   display: flex;
-  align-items: flex-end;
-  gap: 16px;
-  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
 }

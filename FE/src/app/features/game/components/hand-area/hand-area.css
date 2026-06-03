@@ -1,7 +1,7 @@
 :host { display: block; }
 
 .hand-area {
-  background: var(--poke-surface);
+  background: rgba(10, 10, 20, 0.8);
   border-top: 1px solid var(--poke-border);
   padding: 8px 12px;
   overflow-x: auto;
@@ -9,72 +9,128 @@
 }
 
 .hand-area__label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--poke-muted);
   margin-bottom: 6px;
 }
 
 .hand-area__cards {
   display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  min-height: 80px;
+  gap: 6px;
+  align-items: flex-end;
+  min-height: 100px;
+  padding-bottom: 4px;
 }
 
 .hand-card {
-  width: 64px;
+  width: 68px;
   background: var(--poke-surface2);
-  border: 1px solid var(--poke-border);
-  border-radius: var(--radius-sm);
-  padding: 6px 4px;
+  border: 2px solid var(--poke-border);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  text-align: center;
   flex-shrink: 0;
-  transition: border-color 0.15s, transform 0.15s;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, box-shadow 0.2s;
+  cursor: default;
 }
 
-.hand-card.interactive { cursor: pointer; }
-.hand-card.interactive:hover {
+.hand-card--playable {
+  cursor: pointer;
+  border-color: rgba(255,203,5,0.4);
+}
+
+.hand-card--playable:hover {
+  transform: translateY(-18px) scale(1.08);
   border-color: var(--poke-yellow);
-  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 12px rgba(255,203,5,0.3);
+  z-index: 10;
 }
 
-.hand-card--pokemon { border-color: rgba(76,175,80,0.3); }
-.hand-card--pokemon:hover { border-color: var(--poke-success); }
+.hand-card__art {
+  width: 100%;
+  height: 62px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
 
-.hand-card--energy { border-color: rgba(255,203,5,0.3); }
-.hand-card--energy:hover { border-color: var(--poke-yellow); }
+.hand-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-.hand-card--trainer { border-color: rgba(26,111,196,0.3); }
-.hand-card--trainer:hover { border-color: var(--poke-blue); }
+.hand-card__fallback {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
-.hand-card__type-icon { font-size: 18px; }
+.hand-card__energy-art {
+  width: 100%;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+}
+
+.hand-card__energy-icon { font-size: 28px; }
+
+.hand-card__trainer-art {
+  width: 100%;
+  height: 62px;
+  background: linear-gradient(135deg, #2a1a3e, #1e1228);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hand-card__info {
+  padding: 3px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
 
 .hand-card__name {
-  font-size: 9px;
-  font-weight: 600;
+  font-size: 8px;
+  font-weight: 700;
   color: var(--poke-text);
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
 }
 
 .hand-card__hp {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--poke-error);
   font-weight: 700;
+}
+
+.hand-card__playable-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  border: 2px solid var(--poke-yellow);
+  pointer-events: none;
+  animation: ring-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 .hand-area__empty {
   font-size: 12px;
   color: var(--poke-muted);
   align-self: center;
+  padding: 16px;
 }
