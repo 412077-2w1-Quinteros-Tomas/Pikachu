@@ -114,6 +114,14 @@
   font-weight: 700;
 }
 
+.hand-card__stage {
+  font-size: 7px;
+  color: var(--poke-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .hand-card__playable-ring {
   position: absolute;
   inset: -2px;

@@ -32,15 +32,37 @@ public class SetupState implements MatchState {
     private void autoSetupPlayer(PlayerBoard playerBoard) {
         if (playerBoard == null) return;
 
-        // Place first available Basic Pokemon as active
+        // Place first available Basic Pokemon as active — search hand first, fall back to deck
         if (playerBoard.getActivePokemon() == null) {
+            boolean placed = false;
             for (int i = 0; i < playerBoard.getHand().size(); i++) {
                 if (playerBoard.getHand().get(i) instanceof PokemonCard pokemon
                         && pokemon.getStage() == PokemonStage.BASIC) {
                     playerBoard.getHand().remove(i);
                     playerBoard.setActivePokemon(PokemonInPlay.of(pokemon));
+                    placed = true;
                     break;
                 }
+            }
+            if (!placed) {
+                for (int i = 0; i < playerBoard.getDeck().size(); i++) {
+                    if (playerBoard.getDeck().get(i) instanceof PokemonCard pokemon
+                            && pokemon.getStage() == PokemonStage.BASIC) {
+                        playerBoard.getDeck().remove(i);
+                        playerBoard.setActivePokemon(PokemonInPlay.of(pokemon));
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Place up to 3 remaining Basics from hand onto bench so players can retreat
+        for (int i = playerBoard.getHand().size() - 1;
+             i >= 0 && playerBoard.getBench().size() < 3; i--) {
+            if (playerBoard.getHand().get(i) instanceof PokemonCard pokemon
+                    && pokemon.getStage() == PokemonStage.BASIC) {
+                playerBoard.getBench().add(PokemonInPlay.of(pokemon));
+                playerBoard.getHand().remove(i);
             }
         }
     }

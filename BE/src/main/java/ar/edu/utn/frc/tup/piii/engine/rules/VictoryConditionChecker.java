@@ -26,9 +26,11 @@ public class VictoryConditionChecker {
         if (p1.getPrizeCards().isEmpty() && board.getTurnNumber() > 1) return p1.getPlayerId();
         if (p2.getPrizeCards().isEmpty() && board.getTurnNumber() > 1) return p2.getPlayerId();
 
-        // Opponent has no Pokémon
-        if (p1.hasNoPokemon()) return p2.getPlayerId();
-        if (p2.hasNoPokemon()) return p1.getPlayerId();
+        // Opponent has no Pokémon (guard: turn > 1 prevents false wins during setup)
+        if (board.getTurnNumber() > 1) {
+            if (p1.hasNoPokemon()) return p2.getPlayerId();
+            if (p2.hasNoPokemon()) return p1.getPlayerId();
+        }
 
         return null;
     }

@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.piii.websocket;
 
 import ar.edu.utn.frc.tup.piii.engine.GameEngine;
+import ar.edu.utn.frc.tup.piii.engine.models.GameBoard;
 import ar.edu.utn.frc.tup.piii.engine.models.MatchSnapshot;
 import ar.edu.utn.frc.tup.piii.websocket.messages.GameActionMessage;
 import ar.edu.utn.frc.tup.piii.websocket.messages.GameStateUpdateMessage;
@@ -54,10 +55,18 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
                 "playerId", playerId != null ? playerId : "unknown",
                 "playerCount", roomSize)));
 
-        if (roomSize >= 2) {
+        if (roomSize == 2) {
             try {
-                MatchSnapshot snapshot = gameEngine.initializeGame(UUID.fromString(matchId));
-                broadcast(matchId, new GameStateUpdateMessage("GAME_STARTED", matchId, snapshot));
+                UUID matchUUID = UUID.fromString(matchId);
+                GameBoard existing = gameEngine.loadBoard(matchUUID);
+                if (existing == null) {
+                    MatchSnapshot snapshot = gameEngine.initializeGame(matchUUID);
+                    broadcast(matchId, new GameStateUpdateMessage("GAME_STARTED", matchId, snapshot));
+                } else {
+                    // Game already in progress — send current state to reconnected player
+                    broadcast(matchId, new GameStateUpdateMessage("GAME_STARTED", matchId,
+                            MatchSnapshot.of(matchId, existing, List.of())));
+                }
             } catch (Exception e) {
                 broadcast(matchId, new GameStateUpdateMessage("ERROR", matchId,
                         Map.of("message", "Failed to initialize game: " + e.getMessage())));

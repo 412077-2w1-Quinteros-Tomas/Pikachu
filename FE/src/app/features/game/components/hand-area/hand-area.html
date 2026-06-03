@@ -20,6 +20,9 @@
           </div>
           <div class="hand-card__info">
             <span class="hand-card__name">{{ card.name }}</span>
+            @if (stageLabel(card)) {
+              <span class="hand-card__stage">{{ stageLabel(card) }}</span>
+            }
             @if (pokemonHp(card)) {
               <span class="hand-card__hp">{{ pokemonHp(card) }}HP</span>
             }

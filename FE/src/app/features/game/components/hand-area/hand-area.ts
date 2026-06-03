@@ -45,8 +45,18 @@ export class HandAreaComponent {
   isPlayable(card: GameCard): boolean {
     if (!this.isMyTurn()) return false;
     if (card.cardType === 'ENERGY') return this.canPlayEnergy();
-    if (card.cardType === 'POKEMON') return true;
+    if (card.cardType === 'POKEMON') {
+      const stage = (card as PokemonCard).stage;
+      return stage === 'BASIC' || stage === 'EX';
+    }
     return false;
+  }
+
+  stageLabel(card: GameCard): string {
+    if (card.cardType !== 'POKEMON') return '';
+    const stage = (card as PokemonCard).stage;
+    const labels: Record<string, string> = { BASIC: '', STAGE1: 'Evol.1', STAGE2: 'Evol.2', EX: 'EX', MEGA: 'MEGA' };
+    return labels[stage ?? ''] ?? '';
   }
 
   energyBg(card: GameCard): string {
