@@ -1,1 +1,12 @@
-
+<div class="game-over">
+  @if (didWin) {
+    <div class="game-over__trophy">🏆</div>
+    <h1 class="game-over__title win">¡Ganaste!</h1>
+    <p class="game-over__sub">¡Felicitaciones!</p>
+  } @else {
+    <div class="game-over__trophy">😢</div>
+    <h1 class="game-over__title lose">Perdiste</h1>
+    <p class="game-over__sub">Ganador: {{ winner() }}</p>
+  }
+  <a routerLink="/lobby" class="btn-yellow">Volver al Lobby</a>
+</div>

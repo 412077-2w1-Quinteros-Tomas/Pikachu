@@ -1,1 +1,77 @@
+.attack-selector-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.attack-selector-modal {
+  background: var(--poke-surface);
+  border: 1px solid var(--poke-yellow);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 280px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attack-selector-modal__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--poke-yellow);
+  margin: 0;
+  text-align: center;
+}
+
+.attack-selector-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attack-btn {
+  width: 100%;
+  background: var(--poke-surface2);
+  border: 1px solid var(--poke-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--poke-text);
+  font-family: inherit;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.attack-btn:hover {
+  border-color: var(--poke-yellow);
+  background: rgba(255,203,5,0.06);
+}
+
+.attack-btn__name { font-weight: 700; font-size: 14px; }
+.attack-btn__cost { display: flex; gap: 2px; font-size: 11px; }
+.cost-icon { font-size: 10px; }
+.attack-btn__damage { font-size: 13px; font-weight: 700; color: var(--poke-error); }
+.attack-btn__effect { grid-column: 1 / -1; font-size: 11px; color: var(--poke-muted); }
+
+.cancel-btn {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--poke-border);
+  border-radius: var(--radius-sm);
+  color: var(--poke-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.cancel-btn:hover { color: var(--poke-text); border-color: var(--poke-text); }

@@ -1,1 +1,25 @@
+:host { display: block; }
 
+.discard-pile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 50px;
+}
+
+.discard-pile__icon { font-size: 22px; }
+
+.discard-pile__label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--poke-muted);
+}
+
+.discard-pile__count {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--poke-muted);
+}

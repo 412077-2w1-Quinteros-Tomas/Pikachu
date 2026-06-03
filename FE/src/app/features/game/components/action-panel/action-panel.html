@@ -1,1 +1,32 @@
+<div class="action-panel">
+  @if (showAttackSelector()) {
+    <app-attack-selector
+      [attacks]="attacks"
+      (attackSelected)="onAttackSelected($event)"
+      (cancelled)="showAttackSelector.set(false)"
+    />
+  }
 
+  <div class="action-panel__active">
+    @if (board()?.activePokemon) {
+      <span class="active-name">{{ board()!.activePokemon!.pokemon.name }}</span>
+      <span class="active-hp">{{ board()!.activePokemon!.currentHp }} HP</span>
+    }
+  </div>
+
+  <div class="action-panel__btns">
+    <button class="btn btn--attack" [disabled]="!canAttack" (click)="showAttackSelector.set(true)">
+      ⚔️ Atacar
+    </button>
+    <button class="btn btn--retreat" [disabled]="!canRetreat" (click)="retreat.emit(0)">
+      🔄 Retirar
+    </button>
+    <button class="btn btn--end" [disabled]="!canEndTurn" (click)="endTurn.emit()">
+      ✓ Fin de Turno
+    </button>
+  </div>
+
+  @if (!isMyTurn()) {
+    <div class="action-panel__waiting">Turno del oponente...</div>
+  }
+</div>

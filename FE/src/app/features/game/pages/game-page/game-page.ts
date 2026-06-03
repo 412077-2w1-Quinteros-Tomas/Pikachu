@@ -2,13 +2,15 @@ import { Component, ChangeDetectionStrategy, inject, OnInit, OnDestroy } from '@
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { GameStateService } from '../../services/game-state.service';
 import { GameWebsocketService } from '../../services/game-websocket.service';
+import { GameBoardComponent } from '../../components/game-board/game-board';
 
 @Component({
   selector: 'app-game-page',
   templateUrl: './game-page.html',
   styleUrl: './game-page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  standalone: true,
+  imports: [GameBoardComponent, RouterLink],
 })
 export class GamePage implements OnInit, OnDestroy {
 
@@ -29,9 +31,5 @@ export class GamePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.gameWs.disconnect();
-  }
-
-  endTurn(): void {
-    this.gameWs.sendAction(this.matchId, this.playerId, 'END_TURN');
   }
 }

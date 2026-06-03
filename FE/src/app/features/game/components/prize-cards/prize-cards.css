@@ -1,1 +1,45 @@
+:host { display: block; }
 
+.prizes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.prizes__label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--poke-muted);
+}
+
+.prizes__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+}
+
+.prizes__card {
+  width: 22px;
+  height: 30px;
+  background: var(--poke-surface2);
+  border: 1px solid var(--poke-border);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.prizes__card.taken {
+  background: rgba(76,175,80,0.1);
+  border-color: rgba(76,175,80,0.3);
+  color: var(--poke-success);
+}
+
+.prizes__count {
+  font-size: 10px;
+  color: var(--poke-muted);
+}

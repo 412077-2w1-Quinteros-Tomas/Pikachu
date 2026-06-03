@@ -1,1 +1,11 @@
-
+<div class="prizes">
+  <div class="prizes__label">Premios</div>
+  <div class="prizes__grid">
+    @for (i of [0,1,2,3,4,5]; track i) {
+      <div class="prizes__card" [class.taken]="i >= prizes().length">
+        {{ i < prizes().length ? '🎴' : '✓' }}
+      </div>
+    }
+  </div>
+  <div class="prizes__count">{{ prizes().length }}/6</div>
+</div>

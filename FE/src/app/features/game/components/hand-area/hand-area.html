@@ -1,1 +1,33 @@
+@if (showEnergyModal()) {
+  <app-energy-attachment
+    [energies]="energyCards"
+    [targets]="availableTargets()"
+    (energyAttached)="onEnergyAttached($event)"
+    (cancelled)="showEnergyModal.set(false)"
+  />
+}
 
+<div class="hand-area">
+  <div class="hand-area__label">Mano ({{ hand().length }})</div>
+  <div class="hand-area__cards">
+    @for (card of hand(); track card.id) {
+      <div [class]="cardClass(card)"
+           [class.interactive]="isMyTurn()"
+           (click)="onCardClick(card)"
+           [title]="cardLabel(card)">
+        <span class="hand-card__type-icon">
+          @if (card.cardType === 'POKEMON') { 🎴 }
+          @else if (card.cardType === 'ENERGY') { ⚡ }
+          @else { 📜 }
+        </span>
+        <span class="hand-card__name">{{ card.name }}</span>
+        @if (card.cardType === 'POKEMON') {
+          <span class="hand-card__hp">{{ $any(card).hp }} HP</span>
+        }
+      </div>
+    }
+    @if (hand().length === 0) {
+      <div class="hand-area__empty">Sin cartas en mano</div>
+    }
+  </div>
+</div>

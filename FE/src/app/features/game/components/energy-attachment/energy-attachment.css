@@ -1,1 +1,58 @@
+.ea-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.ea-modal {
+  background: var(--poke-surface);
+  border: 1px solid var(--poke-blue);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ea-modal__title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--poke-blue);
+  margin: 0;
+  text-align: center;
+}
+
+.ea-modal__step { font-size: 12px; color: var(--poke-muted); }
+
+.ea-list { display: flex; flex-direction: column; gap: 6px; }
+
+.ea-item {
+  padding: 8px 12px;
+  background: var(--poke-surface2);
+  border: 1px solid var(--poke-border);
+  border-radius: var(--radius-sm);
+  color: var(--poke-text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+.ea-item:hover { border-color: var(--poke-blue); }
+
+.ea-cancel {
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--poke-border);
+  border-radius: var(--radius-sm);
+  color: var(--poke-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.ea-cancel:hover { color: var(--poke-text); }

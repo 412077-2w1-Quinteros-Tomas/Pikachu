@@ -1,1 +1,31 @@
+:host { display: block; }
 
+.player-area {
+  background: var(--poke-surface2);
+  border-bottom: 1px solid var(--poke-border);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-area__field {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  justify-content: center;
+}
+
+.player-area__footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.player-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--poke-yellow);
+  margin-left: auto;
+}

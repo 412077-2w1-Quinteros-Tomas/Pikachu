@@ -52,7 +52,7 @@ export class GameWebsocketService implements OnDestroy {
         break;
       case 'ERROR':
         this.gameState.setError(
-          (msg.data as Record<string, string>)?.message ?? 'Error desconocido'
+          (msg.data as Record<string, string>)?.['message'] ?? 'Error desconocido'
         );
         break;
     }

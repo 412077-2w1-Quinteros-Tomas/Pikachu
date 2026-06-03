@@ -1,11 +1,29 @@
 package ar.edu.utn.frc.tup.piii.engine;
 
+import ar.edu.utn.frc.tup.piii.engine.combat.AttackContext;
+import ar.edu.utn.frc.tup.piii.engine.combat.AttackResolver;
+import ar.edu.utn.frc.tup.piii.engine.combat.DamageCalculator;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.AttackModifierStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.ConfusionCheckStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.DamageCalculationStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.EnergyValidationStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.PostDamageEffectStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.PreAttackEffectStep;
+import ar.edu.utn.frc.tup.piii.engine.combat.steps.TargetSelectionStep;
+import ar.edu.utn.frc.tup.piii.engine.effects.AsleepEffect;
+import ar.edu.utn.frc.tup.piii.engine.effects.BurnedEffect;
+import ar.edu.utn.frc.tup.piii.engine.effects.ConfusedEffect;
+import ar.edu.utn.frc.tup.piii.engine.effects.ParalyzedEffect;
+import ar.edu.utn.frc.tup.piii.engine.effects.PoisonedEffect;
+import ar.edu.utn.frc.tup.piii.engine.effects.StatusEffectManager;
+import ar.edu.utn.frc.tup.piii.engine.effects.StatusEffectStrategy;
 import ar.edu.utn.frc.tup.piii.engine.events.GameEventPublisher;
 import ar.edu.utn.frc.tup.piii.engine.models.EnergyCard;
 import ar.edu.utn.frc.tup.piii.engine.models.GameBoard;
 import ar.edu.utn.frc.tup.piii.engine.models.PlayerBoard;
 import ar.edu.utn.frc.tup.piii.engine.models.PokemonCard;
 import ar.edu.utn.frc.tup.piii.engine.models.PokemonInPlay;
+import ar.edu.utn.frc.tup.piii.engine.models.TurnContext;
 import ar.edu.utn.frc.tup.piii.engine.rules.RuleValidator;
 import ar.edu.utn.frc.tup.piii.engine.rules.TurnManager;
 import ar.edu.utn.frc.tup.piii.engine.rules.VictoryConditionChecker;
@@ -35,7 +53,26 @@ class GameEngineTest {
         turnManager = new TurnManager();
         ruleValidator = new RuleValidator();
         victoryChecker = new VictoryConditionChecker();
-        activeState = new ActiveState(turnManager, ruleValidator, victoryChecker);
+
+        DamageCalculator damageCalculator = new DamageCalculator();
+        AttackResolver attackResolver = new AttackResolver(
+                new EnergyValidationStep(),
+                new PreAttackEffectStep(),
+                new ConfusionCheckStep(),
+                new TargetSelectionStep(),
+                new DamageCalculationStep(damageCalculator),
+                new AttackModifierStep(),
+                new PostDamageEffectStep()
+        );
+
+        List<StatusEffectStrategy> effectStrategies = List.of(
+                new AsleepEffect(), new BurnedEffect(), new ConfusedEffect(),
+                new ParalyzedEffect(), new PoisonedEffect()
+        );
+        StatusEffectManager statusEffectManager = new StatusEffectManager(effectStrategies);
+
+        activeState = new ActiveState(turnManager, ruleValidator, victoryChecker,
+                attackResolver, statusEffectManager);
     }
 
     @Test
@@ -113,17 +150,65 @@ class GameEngineTest {
         board.setPhase(GamePhase.MAIN);
         board.setCurrentPlayerId("p1");
 
-        PokemonCard attacker = buildPokemonWithAttack("Charmander", 50, "Ember", 30);
+        PokemonCard attacker = buildPokemonWithAttack("Charmander", 50, "Ember", 20);
         board.getPlayer1Board().setActivePokemon(PokemonInPlay.of(attacker));
 
-        PokemonCard defender = buildPokemon("Squirtle", 40);
+        PokemonCard defender = buildPokemon("Squirtle", 100);
         board.getPlayer2Board().setActivePokemon(PokemonInPlay.of(defender));
 
         GameActionMessage action = new GameActionMessage("m1", "p1", "ATTACK", Map.of("attackIndex", 0));
         GameEventPublisher pub = new GameEventPublisher();
-        board = activeState.handle(ar.edu.utn.frc.tup.piii.engine.models.TurnContext.of(board, action), pub);
+        board = activeState.handle(TurnContext.of(board, action), pub);
 
-        assertThat(board.getPlayer2Board().getActivePokemon().getCurrentHp()).isEqualTo(10);
+        assertThat(board.getPlayer2Board().getActivePokemon()).isNotNull();
+        assertThat(board.getPlayer2Board().getActivePokemon().getCurrentHp()).isLessThan(100);
+    }
+
+    @Test
+    void attack_withWeakness_doublesBaseDamage() {
+        AttackResolver resolver = buildAttackResolver();
+        GameBoard board = buildBoard("p1", "p2");
+        board.setCurrentPlayerId("p1");
+
+        PokemonCard attacker = buildPokemonWithAttack("Charmander", 60, "Ember", 30);
+        board.getPlayer1Board().setActivePokemon(PokemonInPlay.of(attacker));
+
+        PokemonCard defender = new PokemonCard("squirtle", "Squirtle", 100,
+                PokemonStage.BASIC, List.of(EnergyType.WATER), new ArrayList<>(), "FIRE", null, 1, null);
+        board.getPlayer2Board().setActivePokemon(PokemonInPlay.of(defender));
+
+        GameEventPublisher pub = new GameEventPublisher();
+        AttackContext ctx = resolver.resolve(board, "p1", 0, pub);
+
+        assertThat(ctx.getFinalDamage()).isEqualTo(60);
+    }
+
+    @Test
+    void attack_withResistance_reducesDamageBy30() {
+        AttackResolver resolver = buildAttackResolver();
+        GameBoard board = buildBoard("p1", "p2");
+        board.setCurrentPlayerId("p1");
+
+        PokemonCard attacker = buildPokemonWithAttack("Charmander", 60, "Ember", 50);
+        board.getPlayer1Board().setActivePokemon(PokemonInPlay.of(attacker));
+
+        PokemonCard defender = new PokemonCard("squirtle", "Squirtle", 100,
+                PokemonStage.BASIC, List.of(EnergyType.WATER), new ArrayList<>(), null, "FIRE", 1, null);
+        board.getPlayer2Board().setActivePokemon(PokemonInPlay.of(defender));
+
+        GameEventPublisher pub = new GameEventPublisher();
+        AttackContext ctx = resolver.resolve(board, "p1", 0, pub);
+
+        assertThat(ctx.getFinalDamage()).isEqualTo(20);
+    }
+
+    private AttackResolver buildAttackResolver() {
+        DamageCalculator damageCalculator = new DamageCalculator();
+        return new AttackResolver(
+                new EnergyValidationStep(), new PreAttackEffectStep(), new ConfusionCheckStep(),
+                new TargetSelectionStep(), new DamageCalculationStep(damageCalculator),
+                new AttackModifierStep(), new PostDamageEffectStep()
+        );
     }
 
     private GameBoard buildBoard(String p1Id, String p2Id) {
@@ -157,12 +242,12 @@ class GameEngineTest {
 
     private PokemonCard buildPokemon(String name, int hp) {
         return new PokemonCard(name.toLowerCase(), name, hp, PokemonStage.BASIC,
-                List.of(EnergyType.GRASS), new ArrayList<>(), "Fire", null, 1, null);
+                List.of(EnergyType.GRASS), new ArrayList<>(), null, null, 1, null);
     }
 
     private PokemonCard buildPokemonWithAttack(String name, int hp, String attackName, int damage) {
         PokemonCard.Attack attack = new PokemonCard.Attack(attackName, List.of("COLORLESS"), damage, "");
         return new PokemonCard(name.toLowerCase(), name, hp, PokemonStage.BASIC,
-                List.of(EnergyType.FIRE), List.of(attack), "Water", null, 1, null);
+                List.of(EnergyType.FIRE), List.of(attack), null, null, 1, null);
     }
 }

@@ -1,1 +1,54 @@
+<app-notification-toast [events]="gameState.snapshot()?.events ?? []" />
 
+@if (!gameState.connected()) {
+  <app-setup-phase message="Conectando al juego..." />
+} @else if (gameState.phase() === 'WAITING' || gameState.phase() === 'SETUP') {
+  <app-setup-phase message="Configurando partida..." />
+} @else if (gameState.isFinished()) {
+  <app-game-over [winner]="gameState.winner()" [myPlayerId]="playerId()" />
+} @else if (gameState.board()) {
+  <div class="game-board-layout">
+    <div class="turn-bar" [class.my-turn]="gameState.isMyTurn()">
+      @if (gameState.isMyTurn()) {
+        <span>🟡 Tu turno — Fase: {{ gameState.phase() }} — Turno {{ gameState.board()!.turnNumber }}</span>
+      } @else {
+        <span>⏳ Turno del oponente — Fase: {{ gameState.phase() }}</span>
+      }
+      @if (gameState.error()) {
+        <span class="board-error">⚠️ {{ gameState.error() }}</span>
+      }
+    </div>
+
+    <app-opponent-area [board]="gameState.opponentBoard()" />
+
+    <div class="field-divider">
+      <span class="field-label">Campo de Batalla</span>
+    </div>
+
+    <app-player-area
+      [board]="gameState.myBoard()"
+      [isMyTurn]="gameState.isMyTurn()"
+      (benchSelected)="onRetreat($event)"
+    />
+
+    <app-hand-area
+      [hand]="gameState.myBoard()?.hand ?? []"
+      [isMyTurn]="gameState.isMyTurn()"
+      [canPlayEnergy]="canPlayEnergy()"
+      [availableTargets]="allTargets()"
+      (cardPlayed)="onPlayCard($event)"
+      (energyAttached)="onAttachEnergy($event)"
+    />
+
+    <app-action-panel
+      [board]="gameState.myBoard()"
+      [isMyTurn]="gameState.isMyTurn()"
+      [phase]="gameState.phase()"
+      (attack)="onAttack($event)"
+      (endTurn)="onEndTurn()"
+      (retreat)="onRetreat($event)"
+    />
+  </div>
+} @else {
+  <app-setup-phase message="Esperando al oponente..." />
+}

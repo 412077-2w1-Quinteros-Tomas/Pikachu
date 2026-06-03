@@ -1,1 +1,42 @@
+:host { display: flex; flex: 1; }
 
+.game-over {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 400px;
+}
+
+.game-over__trophy { font-size: 72px; }
+
+.game-over__title {
+  font-size: 40px;
+  font-weight: 900;
+  margin: 0;
+}
+
+.game-over__title.win { color: var(--poke-yellow); }
+.game-over__title.lose { color: var(--poke-muted); }
+
+.game-over__sub {
+  font-size: 16px;
+  color: var(--poke-muted);
+}
+
+.btn-yellow {
+  padding: 10px 28px;
+  background: var(--poke-yellow);
+  color: #111;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.15s;
+}
+.btn-yellow:hover { background: #ffd93d; }

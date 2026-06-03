@@ -1,1 +1,15 @@
-
+<div class="bench">
+  <div class="bench__label">Banca</div>
+  <div class="bench__slots">
+    @for (slot of [0,1,2,3,4]; track slot) {
+      <div class="bench__slot" [class.clickable]="clickable() && !!bench()[slot]"
+           (click)="clickable() && bench()[slot] && benchSelected.emit(slot)">
+        @if (bench()[slot]) {
+          <app-active-pokemon [pokemon]="bench()[slot]" label="Banca" />
+        } @else {
+          <div class="bench__empty">·</div>
+        }
+      </div>
+    }
+  </div>
+</div>

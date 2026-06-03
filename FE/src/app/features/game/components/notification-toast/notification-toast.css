@@ -1,1 +1,25 @@
+:host {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+}
 
+.toast {
+  background: rgba(22, 22, 40, 0.95);
+  border: 1px solid var(--poke-yellow);
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--poke-text);
+  animation: slide-in 0.3s ease;
+  white-space: nowrap;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

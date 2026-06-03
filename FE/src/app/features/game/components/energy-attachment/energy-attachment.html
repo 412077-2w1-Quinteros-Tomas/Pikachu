@@ -1,1 +1,25 @@
-
+<div class="ea-overlay" (click)="cancelled.emit()">
+  <div class="ea-modal" (click)="$event.stopPropagation()">
+    <h3 class="ea-modal__title">Adjuntar Energía</h3>
+    @if (!selectedEnergy) {
+      <p class="ea-modal__step">1. Elegí una energía de tu mano:</p>
+      <div class="ea-list">
+        @for (e of energies(); track e.id) {
+          <button class="ea-item" (click)="selectEnergy(e)">
+            ⚡ {{ e.name }}
+          </button>
+        }
+      </div>
+    } @else {
+      <p class="ea-modal__step">2. Elegí el Pokémon objetivo:</p>
+      <div class="ea-list">
+        @for (t of targets(); track t.instanceId) {
+          <button class="ea-item" (click)="selectTarget(t)">
+            {{ t.pokemon.name }} ({{ t.currentHp }} HP)
+          </button>
+        }
+      </div>
+    }
+    <button class="ea-cancel" (click)="cancelled.emit()">Cancelar</button>
+  </div>
+</div>

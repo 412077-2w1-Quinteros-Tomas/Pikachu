@@ -1,1 +1,41 @@
+:host { display: block; }
 
+.opponent-area {
+  background: var(--poke-surface);
+  border-bottom: 1px solid var(--poke-border);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opponent-area__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.opponent-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--poke-muted);
+}
+
+.opponent-area__stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hand-count {
+  font-size: 11px;
+  color: var(--poke-muted);
+}
+
+.opponent-area__field {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  justify-content: center;
+}
