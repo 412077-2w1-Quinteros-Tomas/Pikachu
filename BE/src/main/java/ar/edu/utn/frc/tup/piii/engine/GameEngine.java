@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +58,7 @@ public class GameEngine {
     private static final int INITIAL_HAND_SIZE = 7;
     private static final Random RANDOM = new Random();
 
+    @Transactional
     public MatchSnapshot initializeGame(UUID matchId) {
         MatchEntity match = matchRepository.findById(matchId)
                 .orElseThrow(() -> EntityNotFoundException.of("Match", matchId));
