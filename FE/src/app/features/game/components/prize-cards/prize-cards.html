@@ -1,11 +1,8 @@
 <div class="prizes">
-  <div class="prizes__label">Premios</div>
-  <div class="prizes__grid">
+  <div class="prizes__stack">
     @for (i of [0,1,2,3,4,5]; track i) {
-      <div class="prizes__card" [class.taken]="i >= prizes().length">
-        {{ i < prizes().length ? '🎴' : '✓' }}
-      </div>
+      <div class="prizes__card" [class.prizes__card--taken]="i >= prizes().length"></div>
     }
   </div>
-  <div class="prizes__count">{{ prizes().length }}/6</div>
+  <div class="prizes__count" [class.prizes__count--low]="prizes().length <= 2">{{ prizes().length }}</div>
 </div>

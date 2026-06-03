@@ -14,7 +14,7 @@
 
 .bench__slot {
   cursor: default;
-  border-radius: 8px;
+  border-radius: 9px;
   transition: transform 0.15s;
 }
 
@@ -24,39 +24,60 @@
 }
 
 @keyframes pulse-bench {
-  from { filter: drop-shadow(0 0 4px rgba(255,221,0,0.3)); }
-  to   { filter: drop-shadow(0 0 10px rgba(255,221,0,0.8)); }
+  from { filter: drop-shadow(0 0 4px rgba(255,221,0,0.25)); }
+  to   { filter: drop-shadow(0 0 12px rgba(255,221,0,0.9)); }
 }
 
+/* ── 10. BENCH MINI CARDS ──────────────────────────────────── */
 .bench-mini {
-  width: 56px;
-  height: 72px;
+  width: 62px;
+  height: 80px;
   background: var(--poke-surface2);
-  border: 1px solid var(--poke-border);
-  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: hidden;
   position: relative;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.45);
 }
 
 .bench-mini--empty {
   border-style: dashed;
-  opacity: 0.25;
+  border-color: rgba(255,255,255,0.1);
+  opacity: 0.2;
   font-size: 18px;
   color: var(--poke-muted);
+  justify-content: center;
+  box-shadow: none;
 }
 
 .bench-mini__img {
   width: 100%;
-  height: 58px;
+  height: 60px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .bench-mini__noimg {
-  font-size: 22px;
+  font-size: 24px;
+  line-height: 60px;
+}
+
+.bench-mini__name {
+  width: 100%;
+  font-size: 6px;
+  font-weight: 800;
+  text-align: center;
+  color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.55);
+  padding: 1px 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .bench-mini__hpbar {
@@ -64,8 +85,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: rgba(255,255,255,0.1);
+  height: 4px;
+  background: rgba(0,0,0,0.4);
 }
 
 .bench-mini__hpfill {
@@ -76,9 +97,10 @@
 .bench-mini__target-icon {
   position: absolute;
   inset: 0;
-  background: rgba(255,221,0,0.2);
+  background: rgba(255,221,0,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
+  backdrop-filter: blur(1px);
 }

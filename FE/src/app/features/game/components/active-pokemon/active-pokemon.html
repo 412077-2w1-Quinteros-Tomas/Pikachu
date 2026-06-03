@@ -5,7 +5,8 @@
 
     <div class="poke-card__label">{{ label() }}</div>
 
-    <div class="poke-card__art">
+    <div class="poke-card__art" [style.background]="typeGradient">
+      <div class="poke-card__type-stripe" [style.background]="typeAccent"></div>
       @if (pokemon()!.pokemon.imageUrl) {
         <img [src]="pokemon()!.pokemon.imageUrl" [alt]="pokemon()!.pokemon.name" class="poke-card__img" />
       } @else {
@@ -30,7 +31,11 @@
     </div>
 
     <div class="poke-card__hpbar">
-      <div class="poke-card__hpfill" [style.width.%]="hpPercent" [style.background]="hpColor"></div>
+      <div class="poke-card__hpfill"
+           [style.width.%]="hpPercent"
+           [style.background]="hpColor"
+           [style.box-shadow]="'0 0 6px ' + hpColor"></div>
+      <span class="poke-card__hptext">{{ hpLabel }}</span>
     </div>
 
     @if (pokemon()!.attachedEnergies.length > 0) {

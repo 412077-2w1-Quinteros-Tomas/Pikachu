@@ -1,22 +1,30 @@
 <div class="attack-selector-overlay" (click)="cancelled.emit()">
   <div class="attack-selector-modal" (click)="$event.stopPropagation()">
-    <h3 class="attack-selector-modal__title">Elegir Ataque</h3>
+    <div class="attack-selector-modal__handle"></div>
+    <h3 class="attack-selector-modal__title">⚔️ Elegir Ataque</h3>
     <div class="attack-selector-modal__list">
       @for (attack of attacks(); track $index) {
         <button class="attack-btn" (click)="attackSelected.emit($index)">
-          <span class="attack-btn__name">{{ attack.name }}</span>
-          <span class="attack-btn__cost">
-            @for (c of attack.cost; track $index) {
-              <span class="cost-icon">⚡</span>
+          <div class="attack-btn__main">
+            <span class="attack-btn__name">{{ attack.name }}</span>
+            <span class="attack-btn__damage">{{ attack.damage > 0 ? attack.damage : '—' }}</span>
+          </div>
+          <div class="attack-btn__sub">
+            <span class="attack-btn__cost">
+              @for (c of attack.cost; track $index) {
+                <span class="cost-orb" [style.background]="energyColor(c)" [title]="c"></span>
+              }
+              @if (!attack.cost?.length) {
+                <span class="cost-free">Sin coste</span>
+              }
+            </span>
+            @if (attack.effect) {
+              <span class="attack-btn__effect">{{ attack.effect }}</span>
             }
-          </span>
-          <span class="attack-btn__damage">{{ attack.damage > 0 ? attack.damage + ' dmg' : '—' }}</span>
-          @if (attack.effect) {
-            <span class="attack-btn__effect">{{ attack.effect }}</span>
-          }
+          </div>
         </button>
       }
     </div>
-    <button class="cancel-btn" (click)="cancelled.emit()">Cancelar</button>
+    <button class="cancel-btn" (click)="cancelled.emit()">✕ Cancelar</button>
   </div>
 </div>

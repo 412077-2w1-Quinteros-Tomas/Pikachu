@@ -18,10 +18,11 @@
       <div class="turn-bar__text">
         @if (gameState.isMyTurn()) {
           <span class="turn-dot turn-dot--active"></span>
-          Tu Turno · Turno {{ gameState.board()!.turnNumber }} · {{ gameState.phase() }}
+          <span class="turn-label">¡Tu Turno!</span>
+          <span class="turn-num">· Turno {{ gameState.board()!.turnNumber }}</span>
         } @else {
           <span class="turn-dot turn-dot--wait"></span>
-          Turno del oponente · {{ gameState.phase() }}
+          <span class="turn-num">Turno del oponente · {{ gameState.board()!.turnNumber }}</span>
         }
       </div>
       @if (isEnergyMode()) {
@@ -35,11 +36,11 @@
     <!-- Opponent area -->
     <app-opponent-area [board]="gameState.opponentBoard()" />
 
-    <!-- Field divider -->
+    <!-- 3. VS Battle Divider -->
     <div class="field-divider">
-      <div class="field-line"></div>
-      <span class="field-label">⚔️ Campo de Batalla ⚔️</span>
-      <div class="field-line"></div>
+      <div class="field-line field-line--left"></div>
+      <div class="vs-badge">VS</div>
+      <div class="field-line field-line--right"></div>
     </div>
 
     <!-- Player area -->

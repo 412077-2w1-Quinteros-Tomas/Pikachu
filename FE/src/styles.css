@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+
 :root {
   --poke-bg:       #0d0d1a;
   --poke-surface:  #161628;
@@ -12,7 +14,18 @@
   --poke-error:    #f44336;
   --radius:        10px;
   --radius-sm:     6px;
-  font-family: 'Inter', system-ui, sans-serif;
+
+  --e-fire:      #ff5500;
+  --e-water:     #0088ff;
+  --e-grass:     #33cc00;
+  --e-lightning: #ffdd00;
+  --e-psychic:   #cc44ff;
+  --e-fighting:  #cc6600;
+  --e-darkness:  #5566bb;
+  --e-metal:     #99aacc;
+  --e-fairy:     #ff66aa;
+  --e-dragon:    #7755dd;
+  --e-colorless: #888;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,4 +34,5 @@ body {
   background: var(--poke-bg);
   color: var(--poke-text);
   min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
 }

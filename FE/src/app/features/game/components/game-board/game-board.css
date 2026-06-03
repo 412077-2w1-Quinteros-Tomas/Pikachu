@@ -5,15 +5,53 @@
   min-height: 0;
 }
 
+/* ── 1. ARENA BATTLEFIELD BACKGROUND ──────────────────────── */
 .game-board-layout {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 50%, #0d1b2e 0%, #0d0d1a 100%);
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 50%, rgba(14,40,90,0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 30% at 50% 50%, rgba(8,24,56,0.65) 0%, transparent 65%),
+    radial-gradient(ellipse at 50% 0%,   rgba(0,0,0,0.65) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.65) 0%, transparent 55%),
+    linear-gradient(180deg, #060a14 0%, #0b1428 35%, #0a1428 65%, #060a14 100%);
 }
 
+/* arena grid lines */
+.game-board-layout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,203,5,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,203,5,0.022) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* arena center oval */
+.game-board-layout::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 62%;
+  height: 26%;
+  border: 1px solid rgba(255,203,5,0.065);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.game-board-layout > * { position: relative; z-index: 1; }
+
+/* ── Error ─────────────────────────────────────────────────── */
 .board-error-full {
   background: rgba(244,67,54,0.1);
   color: var(--poke-error);
@@ -25,49 +63,57 @@
   flex-shrink: 0;
 }
 
-/* Turn bar */
+/* ── 6. TURN BAR ───────────────────────────────────────────── */
 .turn-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 16px;
-  background: rgba(255,255,255,0.03);
-  border-bottom: 1px solid var(--poke-border);
+  padding: 8px 20px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
   flex-shrink: 0;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--poke-muted);
   flex-wrap: wrap;
 }
 
 .turn-bar--mine {
-  background: rgba(255,203,5,0.06);
-  border-bottom-color: rgba(255,203,5,0.25);
+  border-bottom: 2px solid rgba(255,203,5,0.5);
+}
+
+.turn-bar__text { display: flex; align-items: center; gap: 8px; }
+
+.turn-label {
+  font-size: 15px;
+  font-weight: 900;
   color: var(--poke-yellow);
+  text-shadow: 0 0 14px rgba(255,203,5,0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  animation: label-glow 2s ease-in-out infinite;
 }
 
-.turn-bar__text { display: flex; align-items: center; gap: 6px; }
-
-.turn-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+@keyframes label-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(255,203,5,0.5); }
+  50%       { text-shadow: 0 0 22px rgba(255,203,5,1), 0 0 40px rgba(255,203,5,0.35); }
 }
 
+.turn-num { font-size: 11px; color: var(--poke-muted); font-weight: 500; }
+
+.turn-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .turn-dot--active {
   background: var(--poke-yellow);
-  box-shadow: 0 0 8px var(--poke-yellow);
+  box-shadow: 0 0 8px var(--poke-yellow), 0 0 16px rgba(255,203,5,0.4);
   animation: blink 1s ease-in-out infinite;
 }
-
-.turn-dot--wait {
-  background: var(--poke-muted);
-}
+.turn-dot--wait { background: var(--poke-muted); opacity: 0.4; }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--poke-yellow); }
+  50%       { opacity: 0.35; box-shadow: none; }
 }
 
 .energy-mode-hint {
@@ -75,6 +121,10 @@
   color: #ffdd00;
   font-weight: 700;
   animation: slide-in 0.3s ease;
+  background: rgba(255,221,0,0.1);
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,221,0,0.3);
 }
 
 @keyframes slide-in {
@@ -84,43 +134,52 @@
 
 .cancel-link {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.25);
   color: var(--poke-muted);
   font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
   margin-left: 4px;
 }
 .cancel-link:hover { color: var(--poke-text); }
+.board-error { color: var(--poke-error); font-size: 11px; margin-left: auto; }
 
-.board-error {
-  color: var(--poke-error);
-  font-size: 11px;
-  margin-left: auto;
-}
-
-/* Field divider */
+/* ── 3. VS BATTLE DIVIDER ──────────────────────────────────── */
 .field-divider {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 16px;
   flex-shrink: 0;
+  padding: 0 20px;
+  height: 44px;
+  gap: 0;
 }
 
-.field-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,203,5,0.2), transparent);
+.field-line { flex: 1; height: 1px; }
+.field-line--left  { background: linear-gradient(90deg, transparent, rgba(255,203,5,0.5)); }
+.field-line--right { background: linear-gradient(90deg, rgba(255,203,5,0.5), transparent); }
+
+.vs-badge {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: radial-gradient(circle, rgba(255,203,5,0.22) 0%, rgba(255,203,5,0.04) 65%, transparent 100%);
+  border: 2px solid rgba(255,203,5,0.55);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--poke-yellow);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(255,203,5,0.9);
+  box-shadow: 0 0 20px rgba(255,203,5,0.28);
+  animation: vs-pulse 2.5s ease-in-out infinite;
 }
 
-.field-label {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: rgba(255,203,5,0.35);
-  white-space: nowrap;
+@keyframes vs-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,203,5,0.2); }
+  50%       { box-shadow: 0 0 32px rgba(255,203,5,0.55); }
 }

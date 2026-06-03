@@ -12,6 +12,7 @@
             } @else {
               <span class="bench-mini__noimg">🎴</span>
             }
+            <div class="bench-mini__name">{{ bench()[slot].pokemon.name }}</div>
             <div class="bench-mini__hpbar">
               <div class="bench-mini__hpfill" [style.width.%]="hpPercent(bench()[slot])" [style.background]="hpColor(bench()[slot])"></div>
             </div>

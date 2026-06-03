@@ -1,54 +1,74 @@
 :host { display: block; }
 
+/* ── 2. TCG CARD DESIGN + 4. THICK HP BAR ─────────────────── */
 .poke-card {
-  width: 130px;
+  width: 170px;
   background: var(--poke-surface2);
-  border: 2px solid var(--poke-border);
-  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
   position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+.poke-card:not(.poke-card--empty):not(.poke-card--energy-target) {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 
 .poke-card--energy-target {
   cursor: pointer;
   border-color: #ffdd00;
-  box-shadow: 0 0 16px rgba(255,221,0,0.6);
+  box-shadow: 0 0 20px rgba(255,221,0,0.7), 0 6px 24px rgba(0,0,0,0.5);
   animation: pulse-target 1s ease-in-out infinite alternate;
 }
 
 @keyframes pulse-target {
-  from { box-shadow: 0 0 8px rgba(255,221,0,0.4); }
-  to   { box-shadow: 0 0 20px rgba(255,221,0,0.9); }
+  from { box-shadow: 0 0 10px rgba(255,221,0,0.5); }
+  to   { box-shadow: 0 0 28px rgba(255,221,0,1), 0 0 50px rgba(255,221,0,0.3); }
 }
 
 .poke-card--empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.35;
-  height: 140px;
+  opacity: 0.3;
+  height: 165px;
   border-style: dashed;
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.02);
+  flex-direction: column;
+  gap: 6px;
 }
 
 .poke-card__label {
   font-size: 8px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--poke-muted);
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
   text-align: center;
-  padding: 4px 4px 0;
+  padding: 5px 6px 0;
 }
 
 .poke-card__art {
   position: relative;
   width: 100%;
-  height: 110px;
+  height: 126px;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+/* type color stripe at top of art */
+.poke-card__type-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.9;
+  z-index: 1;
 }
 
 .poke-card__img {
@@ -64,10 +84,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
 }
 
-.poke-card__emoji { font-size: 40px; }
+.poke-card__emoji { font-size: 44px; }
 
 .poke-card__noimg-name {
   font-size: 9px;
@@ -77,39 +97,43 @@
 
 .poke-card__condition {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background: rgba(0,0,0,0.75);
+  top: 6px;
+  right: 5px;
+  background: rgba(0,0,0,0.8);
   border-radius: 6px;
-  padding: 2px 4px;
+  padding: 2px 5px;
   font-size: 9px;
   color: #fff;
+  z-index: 2;
+  backdrop-filter: blur(4px);
 }
 
 .poke-card__energy-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255,221,0,0.25);
+  background: rgba(255,221,0,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 900;
   color: #ffdd00;
   text-shadow: 0 1px 4px #000;
+  backdrop-filter: blur(1px);
 }
 
 .poke-card__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 3px 6px;
+  padding: 4px 8px;
   gap: 4px;
+  background: rgba(0,0,0,0.25);
 }
 
 .poke-card__name {
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--poke-text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -119,38 +143,58 @@
 
 .poke-card__hp {
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 900;
   flex-shrink: 0;
+  letter-spacing: 0.03em;
 }
 
+/* ── 4. THICK HP BAR ───────────────────────────────────────── */
 .poke-card__hpbar {
-  height: 3px;
-  background: rgba(255,255,255,0.1);
-  overflow: hidden;
+  height: 8px;
+  background: rgba(0,0,0,0.35);
+  position: relative;
+  overflow: visible;
 }
 
 .poke-card__hpfill {
   height: 100%;
   transition: width 0.5s ease, background 0.5s;
+  border-radius: 0 2px 2px 0;
 }
 
+.poke-card__hptext {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 7px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* ── 9. ENERGY BADGES ──────────────────────────────────────── */
 .poke-card__energies {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
-  padding: 3px 4px;
+  gap: 3px;
+  padding: 4px 6px;
 }
 
 .poke-card__energy-badge {
   font-size: 11px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.5), 0 0 5px currentColor;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
-.poke-card__empty-icon { font-size: 28px; }
-.poke-card__empty-text { font-size: 9px; color: var(--poke-muted); }
+.poke-card__empty-icon { font-size: 30px; }
+.poke-card__empty-text { font-size: 9px; color: rgba(255,255,255,0.3); }

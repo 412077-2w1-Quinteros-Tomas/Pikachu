@@ -1,31 +1,51 @@
+/* ── 8. ATTACK SELECTOR – BOTTOM SHEET ────────────────────── */
 .attack-selector-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.72);
   z-index: 500;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
 }
 
 .attack-selector-modal {
-  background: var(--poke-surface);
-  border: 1px solid var(--poke-yellow);
-  border-radius: var(--radius);
-  padding: 20px;
-  min-width: 280px;
-  max-width: 400px;
+  background: linear-gradient(170deg, #0c1828, #151628);
+  border: 1px solid rgba(255,203,5,0.35);
+  border-bottom: none;
+  border-radius: 22px 22px 0 0;
+  padding: 8px 20px 28px;
+  width: 100%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  animation: slide-up 0.32s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 -8px 48px rgba(0,0,0,0.7), 0 -2px 20px rgba(255,203,5,0.08);
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.attack-selector-modal__handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 2px;
+  margin: 0 auto 4px;
 }
 
 .attack-selector-modal__title {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 900;
   color: var(--poke-yellow);
   margin: 0;
   text-align: center;
+  text-shadow: 0 0 14px rgba(255,203,5,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .attack-selector-modal__list {
@@ -36,42 +56,93 @@
 
 .attack-btn {
   width: 100%;
-  background: var(--poke-surface2);
-  border: 1px solid var(--poke-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 12px 16px;
   color: var(--poke-text);
   font-family: inherit;
   cursor: pointer;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 8px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   text-align: left;
-  transition: border-color 0.15s, background 0.15s;
+  transition: all 0.2s;
 }
 
 .attack-btn:hover {
-  border-color: var(--poke-yellow);
+  border-color: rgba(255,203,5,0.5);
   background: rgba(255,203,5,0.06);
+  transform: scale(1.015);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
-.attack-btn__name { font-weight: 700; font-size: 14px; }
-.attack-btn__cost { display: flex; gap: 2px; font-size: 11px; }
-.cost-icon { font-size: 10px; }
-.attack-btn__damage { font-size: 13px; font-weight: 700; color: var(--poke-error); }
-.attack-btn__effect { grid-column: 1 / -1; font-size: 11px; color: var(--poke-muted); }
+.attack-btn__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.attack-btn__name {
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.attack-btn__damage {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--poke-error);
+  text-shadow: 0 0 10px rgba(244,67,54,0.5);
+  min-width: 44px;
+  text-align: right;
+}
+
+.attack-btn__sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attack-btn__cost { display: flex; gap: 4px; align-items: center; }
+
+.cost-orb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 5px currentColor;
+  flex-shrink: 0;
+}
+
+.cost-free {
+  font-size: 10px;
+  color: var(--poke-muted);
+  font-style: italic;
+}
+
+.attack-btn__effect {
+  font-size: 11px;
+  color: var(--poke-muted);
+  flex: 1;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .cancel-btn {
   width: 100%;
-  padding: 8px;
-  background: transparent;
-  border: 1px solid var(--poke-border);
-  border-radius: var(--radius-sm);
+  padding: 11px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
   color: var(--poke-muted);
   font-family: inherit;
   font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
 }
-.cancel-btn:hover { color: var(--poke-text); border-color: var(--poke-text); }
+.cancel-btn:hover { color: var(--poke-text); border-color: rgba(255,255,255,0.2); }

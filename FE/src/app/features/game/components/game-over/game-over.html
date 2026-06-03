@@ -1,12 +1,21 @@
-<div class="game-over">
-  @if (didWin) {
-    <div class="game-over__trophy">🏆</div>
-    <h1 class="game-over__title win">¡Ganaste!</h1>
-    <p class="game-over__sub">¡Felicitaciones!</p>
-  } @else {
-    <div class="game-over__trophy">😢</div>
-    <h1 class="game-over__title lose">Perdiste</h1>
-    <p class="game-over__sub">Ganador: {{ winner() }}</p>
-  }
-  <a routerLink="/lobby" class="btn-yellow">Volver al Lobby</a>
+<div class="game-over" [class.game-over--win]="didWin" [class.game-over--lose]="!didWin">
+  <!-- Particle stars (win only) -->
+  <div class="particles">
+    @for (p of [0,1,2,3,4,5,6,7,8,9,10,11]; track p) {
+      <div class="particle"></div>
+    }
+  </div>
+
+  <div class="game-over__content">
+    @if (didWin) {
+      <div class="game-over__icon">🏆</div>
+      <h1 class="game-over__title">¡VICTORIA!</h1>
+      <p class="game-over__sub">¡Entrenador Superior Pokémon!</p>
+    } @else {
+      <div class="game-over__icon">💔</div>
+      <h1 class="game-over__title">DERROTA</h1>
+      <p class="game-over__sub">Ganó <strong>{{ winner() }}</strong></p>
+    }
+    <a routerLink="/lobby" class="game-over__btn">← Volver al Lobby</a>
+  </div>
 </div>
