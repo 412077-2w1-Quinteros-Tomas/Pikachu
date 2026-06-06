@@ -231,7 +231,10 @@ public class GameEngine {
                 String dmgStr = m.getOrDefault("damage", "0").toString().replaceAll("[^0-9]", "");
                 int dmg = dmgStr.isEmpty() ? 0 : Integer.parseInt(dmgStr);
                 String effect = m.getOrDefault("effect", "") != null ? m.get("effect").toString() : "";
-                attacks.add(new PokemonCard.Attack(name, new ArrayList<>(), dmg, effect));
+                Object rawCost = m.get("cost");
+                @SuppressWarnings("unchecked")
+                List<String> cost = rawCost instanceof List ? new ArrayList<>((List<String>) rawCost) : new ArrayList<>();
+                attacks.add(new PokemonCard.Attack(name, cost, dmg, effect));
             }
             return attacks;
         } catch (Exception e) {

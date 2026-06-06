@@ -152,6 +152,10 @@ public class ActiveState implements MatchState {
             board.log(playerId + " already attacked this turn");
             return board;
         }
+        if (board.getTurnNumber() == 1) {
+            board.log("First player cannot attack on their first turn");
+            return board;
+        }
 
         if (!statusEffectManager.canAttack(attacker.getActivePokemon())) {
             board.log(attacker.getActivePokemon().getPokemon().getName() + " cannot attack due to a status condition");
@@ -193,6 +197,9 @@ public class ActiveState implements MatchState {
                 Map.of("pokemon", koedPokemon.getPokemon().getName())));
 
         defender.getDiscardPile().add(koedPokemon.getPokemon());
+        if (koedPokemon.getAttachedEnergies() != null) {
+            defender.getDiscardPile().addAll(koedPokemon.getAttachedEnergies());
+        }
         defender.setActivePokemon(null);
 
         PlayerBoard attackerBoard = board.getBoardFor(attackerId);
@@ -229,8 +236,24 @@ public class ActiveState implements MatchState {
 
         if (benchIndex >= pb.getBench().size()) return board;
 
+        PokemonInPlay active = pb.getActivePokemon();
+        int retreatCost = active.getPokemon().getRetreatCost();
+
+        if (active.getAttachedEnergies().size() < retreatCost) {
+            board.log(active.getPokemon().getName() + " needs " + retreatCost + " energy to retreat (has "
+                    + active.getAttachedEnergies().size() + ")");
+            return board;
+        }
+
+        for (int i = 0; i < retreatCost; i++) {
+            EnergyCard discarded = active.getAttachedEnergies().remove(0);
+            pb.getDiscardPile().add(discarded);
+        }
+
+        active.setSpecialCondition(null);
+
         PokemonInPlay newActive = pb.getBench().remove(benchIndex);
-        pb.getBench().add(0, pb.getActivePokemon());
+        pb.getBench().add(0, active);
         pb.setActivePokemon(newActive);
         pb.setHasRetreatedThisTurn(true);
 
@@ -243,8 +266,12 @@ public class ActiveState implements MatchState {
     private GameBoard doEndTurn(GameBoard board, GameEventPublisher publisher) {
         String currentPlayer = board.getCurrentPlayerId();
         PlayerBoard currentBoard = board.getBoardFor(currentPlayer);
+        PlayerBoard opponentBoard = board.getOpponentBoard(currentPlayer);
         if (currentBoard != null) {
             statusEffectManager.applyBetweenTurnEffects(currentBoard, publisher);
+        }
+        if (opponentBoard != null) {
+            statusEffectManager.applyBetweenTurnEffects(opponentBoard, publisher);
         }
         return turnManager.endTurn(board, publisher);
     }

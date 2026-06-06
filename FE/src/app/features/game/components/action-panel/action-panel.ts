@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
-import { GameAttack, PlayerBoard } from '../../../../shared/models/game.model';
+import { EnergyCard, GameAttack, PlayerBoard } from '../../../../shared/models/game.model';
 import { AttackSelectorComponent } from '../attack-selector/attack-selector';
 
 @Component({
@@ -27,19 +27,35 @@ export class ActionPanelComponent {
   }
 
   get canAttack(): boolean {
-    return this.isMyTurn()
-      && (this.phase() === 'MAIN' || this.phase() === 'DRAW')
-      && !this.board()?.hasAttackedThisTurn
-      && !!this.board()?.activePokemon
-      && this.attacks.length > 0;
+    if (!this.isMyTurn() || this.phase() !== 'MAIN') return false;
+    if (this.board()?.hasAttackedThisTurn) return false;
+    const active = this.board()?.activePokemon;
+    if (!active || this.attacks.length === 0) return false;
+    return this.attacks.some(a => this.hasEnoughEnergy(active.attachedEnergies ?? [], a.cost ?? []));
   }
 
   get canRetreat(): boolean {
-    return this.isMyTurn()
-      && (this.phase() === 'MAIN' || this.phase() === 'DRAW')
-      && !this.board()?.hasRetreatedThisTurn
-      && !!this.board()?.activePokemon
-      && (this.board()?.bench?.length ?? 0) > 0;
+    if (!this.isMyTurn() || this.phase() !== 'MAIN') return false;
+    if (this.board()?.hasRetreatedThisTurn) return false;
+    const active = this.board()?.activePokemon;
+    if (!active || (this.board()?.bench?.length ?? 0) === 0) return false;
+    return (active.attachedEnergies?.length ?? 0) >= (active.pokemon.retreatCost ?? 0);
+  }
+
+  private hasEnoughEnergy(attached: EnergyCard[], cost: string[]): boolean {
+    if (!cost || cost.length === 0) return true;
+    const remaining = attached.map(e => e.energyType as string);
+    const colorlessNeeded: number = cost.filter(c => c.toLowerCase() === 'colorless').length;
+    for (const req of cost) {
+      if (req.toLowerCase() === 'colorless') continue;
+      const idx = remaining.findIndex(e => e.toLowerCase() === req.toLowerCase());
+      if (idx >= 0) {
+        remaining.splice(idx, 1);
+      } else {
+        return false;
+      }
+    }
+    return remaining.length >= colorlessNeeded;
   }
 
   get canEndTurn(): boolean {
