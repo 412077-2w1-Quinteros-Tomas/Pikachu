@@ -8,71 +8,44 @@
   tabindex="0"
   role="button"
   [attr.aria-label]="card().name"
+  [style.--accent]="getPrimaryTypeColor()"
 >
-  <!-- Image -->
-  <div class="card__image-wrapper">
+  <!-- Art layer -->
+  <div class="card__art">
     @if (card().imageUrl) {
-      <img
-        class="card__image"
-        [src]="card().imageUrl"
-        [alt]="card().name"
-        loading="lazy"
-      />
+      <img class="card__img" [src]="card().imageUrl" [alt]="card().name" loading="lazy" />
     } @else {
-      <div class="card__image-placeholder">{{ card().name[0] }}</div>
+      <div class="card__placeholder">
+        <span class="card__placeholder-letter">{{ card().name[0] }}</span>
+      </div>
     }
   </div>
 
-  <!-- Info (oculto en modo compact) -->
+  <!-- Holographic foil layer (responds to --hx / --hy) -->
+  <div class="card__holo" aria-hidden="true"></div>
+
+  <!-- Glare/specular highlight (responds to --mx / --my) -->
+  <div class="card__shine" aria-hidden="true"></div>
+
+  <!-- Border glow ring -->
+  <div class="card__glow-ring" aria-hidden="true"></div>
+
+  <!-- Info overlay (compact: just rarity dots; full: name + meta) -->
   @if (!compact()) {
-    <div class="card__info">
-      <div class="card__header">
-        <span class="card__name">{{ card().name }}</span>
+    <div class="card__overlay">
+      @if (getRarityStars()) {
+        <span class="card__rarity">{{ getRarityStars() }}</span>
+      }
+      <div class="card__name">{{ card().name }}</div>
+      <div class="card__meta">
         @if (card().hp) {
-          <span class="card__hp">{{ card().hp }} HP</span>
+          <span class="card__hp">{{ card().hp }}<small>HP</small></span>
         }
-      </div>
-
-      <!-- Tipos -->
-      @if (card().types?.length) {
-        <div class="card__types">
-          @for (type of card().types; track type) {
-            <span
-              class="card__type-badge"
-              [style.background-color]="getEnergyColor(type)"
-              [title]="type"
-            >{{ type }}</span>
-          }
-        </div>
-      }
-
-      <!-- Stage / subtipo -->
-      @if (card().stage) {
-        <span class="card__stage">{{ card().stage }}</span>
-      }
-
-      <!-- Ataques -->
-      @if (card().attacks?.length) {
-        <ul class="card__attacks">
-          @for (attack of card().attacks; track attack.name) {
-            <li class="card__attack">
-              <span class="card__attack-name">{{ attack.name }}</span>
-              <span class="card__attack-damage">{{ attack.damage }}</span>
-            </li>
-          }
-        </ul>
-      }
-
-      <!-- Debilidad / Resistencia / Retirada -->
-      <div class="card__stats">
-        @if (card().weakness) {
-          <span class="card__stat">W: {{ card().weakness }}</span>
+        @for (type of (card().types ?? []); track type) {
+          <span class="card__type-pip" [style.background]="getEnergyColor(type)"></span>
         }
-        @if (card().resistance) {
-          <span class="card__stat">R: {{ card().resistance }}</span>
-        }
-        @if (card().retreatCost != null) {
-          <span class="card__stat">RC: {{ card().retreatCost }}</span>
+        @if (card().stage) {
+          <span class="card__stage-tag">{{ card().stage }}</span>
         }
       </div>
     </div>
