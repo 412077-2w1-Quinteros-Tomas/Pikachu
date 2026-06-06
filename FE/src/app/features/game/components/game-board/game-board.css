@@ -145,6 +145,18 @@
 }
 .cancel-link:hover { color: var(--poke-text); }
 .board-error { color: var(--poke-error); font-size: 11px; margin-left: auto; }
+.board-error--rule {
+  background: rgba(244,67,54,0.12);
+  border: 1px solid rgba(244,67,54,0.3);
+  border-radius: 8px;
+  padding: 2px 10px;
+  animation: error-shake 0.35s ease;
+}
+@keyframes error-shake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
 
 /* ── 3. VS BATTLE DIVIDER ──────────────────────────────────── */
 .field-divider {

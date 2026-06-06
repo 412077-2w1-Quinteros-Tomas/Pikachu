@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, inject, computed, signal } from '@angular/core';
 import { GameStateService } from '../../services/game-state.service';
 import { GameWebsocketService } from '../../services/game-websocket.service';
+import { GameStateMachineService } from '../../services/game-state-machine.service';
 import { PokemonInPlay } from '../../../../shared/models/game.model';
 import { OpponentAreaComponent } from '../opponent-area/opponent-area';
 import { PlayerAreaComponent } from '../player-area/player-area';
@@ -27,7 +28,10 @@ export class GameBoardComponent {
   readonly playerId = input.required<string>();
 
   protected readonly gameState = inject(GameStateService);
+  protected readonly stateMachine = inject(GameStateMachineService);
   private readonly gameWs = inject(GameWebsocketService);
+
+  protected readonly validationError = signal<string | null>(null);
 
   protected readonly selectedEnergy = signal<string | null>(null);
 
@@ -63,21 +67,38 @@ export class GameBoardComponent {
   }
 
   onAttack(attackIndex: number): void {
+    const check = this.stateMachine.validate({ type: 'ATTACK', attackIndex });
+    if (!check.valid) { this.showValidationError(check.reason!); return; }
+    this.clearValidationError();
     this.gameWs.sendAction(this.matchId(), this.playerId(), 'ATTACK', { attackIndex });
   }
 
   onEndTurn(): void {
     this.selectedEnergy.set(null);
+    this.clearValidationError();
     this.gameWs.sendAction(this.matchId(), this.playerId(), 'END_TURN');
   }
 
   onRetreat(benchIndex: number): void {
     if (this.isEnergyMode()) { this.cancelEnergyMode(); return; }
+    const check = this.stateMachine.validate({ type: 'RETREAT', benchIndex });
+    if (!check.valid) { this.showValidationError(check.reason!); return; }
+    this.clearValidationError();
     this.gameWs.sendAction(this.matchId(), this.playerId(), 'RETREAT', { benchIndex });
   }
 
   onPlayCard(cardId: string): void {
+    this.clearValidationError();
     this.gameWs.sendAction(this.matchId(), this.playerId(), 'PLAY_CARD', { cardId });
+  }
+
+  private showValidationError(reason: string): void {
+    this.validationError.set(reason);
+    setTimeout(() => this.validationError.set(null), 3000);
+  }
+
+  private clearValidationError(): void {
+    this.validationError.set(null);
   }
 
   onActiveTargetSelected(): void {

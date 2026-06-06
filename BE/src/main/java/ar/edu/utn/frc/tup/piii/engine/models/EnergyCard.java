@@ -14,6 +14,7 @@ public class EnergyCard implements GameCard {
     private String id;
     private String name;
     private EnergyType energyType;
+    private String imageUrl;
 
     @Override
     public CardType getCardType() {

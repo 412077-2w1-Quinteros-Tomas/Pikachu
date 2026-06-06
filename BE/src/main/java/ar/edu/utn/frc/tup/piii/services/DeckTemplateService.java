@@ -28,17 +28,16 @@ public class DeckTemplateService {
     @Transactional
     public int seedAllTemplates() {
         int created = 0;
-        created += createTemplate(llamasDeKalos());
-        created += createTemplate(tormentaElectrica());
-        created += createTemplate(profundidadesAbisales());
-        created += createTemplate(sombrasOscuras());
+        created += upsertTemplate(llamasDeKalos());
+        created += upsertTemplate(tormentaElectrica());
+        created += upsertTemplate(profundidadesAbisales());
+        created += upsertTemplate(sombrasOscuras());
         return created;
     }
 
-    private int createTemplate(DeckBlueprint bp) {
-        if (deckRepository.existsByName(bp.name)) {
-            return 0;
-        }
+    private int upsertTemplate(DeckBlueprint bp) {
+        // Delete existing so trainer cards are always up to date
+        deckRepository.findByName(bp.name).ifPresent(deckRepository::delete);
 
         List<CardEntity> allCards = cardRepository.findBySetId("xy1");
 
@@ -54,15 +53,7 @@ public class DeckTemplateService {
             String cardName = entry.getKey();
             int qty = entry.getValue();
 
-            CardEntity card = allCards.stream()
-                    .filter(c -> c.getName().equalsIgnoreCase(cardName))
-                    .findFirst().orElse(null);
-
-            if (card == null) {
-                card = allCards.stream()
-                        .filter(c -> c.getName().toLowerCase().contains(cardName.toLowerCase()))
-                        .findFirst().orElse(null);
-            }
+            CardEntity card = findCardByName(allCards, cardName);
 
             if (card != null) {
                 DeckCardEntity dc = new DeckCardEntity();
@@ -95,8 +86,23 @@ public class DeckTemplateService {
         return 1;
     }
 
+    private CardEntity findCardByName(List<CardEntity> allCards, String cardName) {
+        CardEntity card = allCards.stream()
+                .filter(c -> c.getName().equalsIgnoreCase(cardName))
+                .findFirst().orElse(null);
+        if (card == null) {
+            card = allCards.stream()
+                    .filter(c -> c.getName().toLowerCase().contains(cardName.toLowerCase()))
+                    .findFirst().orElse(null);
+        }
+        return card;
+    }
+
+    // ── Blueprint definitions ────────────────────────────────────────────────
+
     private DeckBlueprint llamasDeKalos() {
         Map<String, Integer> recipe = new LinkedHashMap<>();
+        // Pokémon (20)
         recipe.put("Fennekin", 4);
         recipe.put("Braixen", 3);
         recipe.put("Delphox", 2);
@@ -104,6 +110,13 @@ public class DeckTemplateService {
         recipe.put("Magcargo", 3);
         recipe.put("Pansear", 2);
         recipe.put("Simisear", 2);
+        // Entrenadores (16): solo cartas confirmadas en XY1
+        recipe.put("Professor Sycamore", 4);   // Partidario: roba 7
+        recipe.put("Shauna", 2);               // Partidario: baraja y roba 5
+        recipe.put("Muscle Band", 4);          // Herramienta: +20 daño
+        recipe.put("Super Potion", 4);         // Objeto: cura 60 HP
+        recipe.put("Great Ball", 2);           // Objeto: busca Pokémon (top 7)
+        // Fill: 24 Fire Energy
         return new DeckBlueprint(
                 "🔥 Llamas de Kalos",
                 "Mazo de Fuego con la línea evolutiva de Fennekin. ¡Quema todo a tu paso!",
@@ -114,11 +127,19 @@ public class DeckTemplateService {
 
     private DeckBlueprint tormentaElectrica() {
         Map<String, Integer> recipe = new LinkedHashMap<>();
+        // Pokémon (18)
         recipe.put("Pikachu", 4);
         recipe.put("Raichu", 3);
         recipe.put("Voltorb", 4);
         recipe.put("Electrode", 3);
         recipe.put("Emolga-EX", 4);
+        // Entrenadores (16): solo cartas confirmadas en XY1
+        recipe.put("Professor Sycamore", 4);   // Partidario: roba 7
+        recipe.put("Shauna", 2);               // Partidario: baraja y roba 5
+        recipe.put("Muscle Band", 4);          // Herramienta: +20 daño
+        recipe.put("Great Ball", 4);           // Objeto: busca Pokémon
+        recipe.put("Evosoda", 2);              // Objeto: evoluciona desde mazo
+        // Fill: 26 Lightning Energy
         return new DeckBlueprint(
                 "⚡ Tormenta Eléctrica",
                 "Mazo Eléctrico con Pikachu, Raichu y el poderoso Emolga-EX. ¡Descarga total!",
@@ -129,6 +150,7 @@ public class DeckTemplateService {
 
     private DeckBlueprint profundidadesAbisales() {
         Map<String, Integer> recipe = new LinkedHashMap<>();
+        // Pokémon (20)
         recipe.put("Froakie", 4);
         recipe.put("Frogadier", 3);
         recipe.put("Greninja", 2);
@@ -136,6 +158,13 @@ public class DeckTemplateService {
         recipe.put("Cloyster", 3);
         recipe.put("Staryu", 2);
         recipe.put("Starmie", 2);
+        // Entrenadores (16): solo cartas confirmadas en XY1
+        recipe.put("Professor Sycamore", 4);   // Partidario: roba 7
+        recipe.put("Team Flare Grunt", 2);     // Partidario: descarta energía rival
+        recipe.put("Muscle Band", 4);          // Herramienta: +20 daño
+        recipe.put("Super Potion", 4);         // Objeto: cura 60 HP
+        recipe.put("Evosoda", 2);              // Objeto: evoluciona desde mazo
+        // Fill: 24 Water Energy
         return new DeckBlueprint(
                 "💧 Profundidades Abisales",
                 "Mazo Agua con Greninja como ninja acuático y Cloyster como barrera defensiva.",
@@ -146,6 +175,7 @@ public class DeckTemplateService {
 
     private DeckBlueprint sombrasOscuras() {
         Map<String, Integer> recipe = new LinkedHashMap<>();
+        // Pokémon (20)
         recipe.put("Zorua", 4);
         recipe.put("Zoroark", 3);
         recipe.put("Sandile", 4);
@@ -153,6 +183,12 @@ public class DeckTemplateService {
         recipe.put("Krookodile", 2);
         recipe.put("Yveltal", 2);
         recipe.put("Yveltal-EX", 2);
+        // Entrenadores (16): solo cartas confirmadas en XY1
+        recipe.put("Professor Sycamore", 4);   // Partidario: roba 7
+        recipe.put("Team Flare Grunt", 4);     // Partidario: descarta energía rival
+        recipe.put("Muscle Band", 4);          // Herramienta: +20 daño
+        recipe.put("Red Card", 4);             // Objeto: rival baraja y roba 4
+        // Fill: 24 Darkness Energy
         return new DeckBlueprint(
                 "🌑 Sombras Oscuras",
                 "Mazo Oscuridad con Yveltal-EX como carta legendaria. ¡El poder de la oscuridad!",

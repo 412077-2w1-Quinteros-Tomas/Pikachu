@@ -13,6 +13,7 @@ public class TrainerCard implements GameCard {
     private String id;
     private String name;
     private String effect;
+    private String imageUrl;
 
     @Override
     public CardType getCardType() {

@@ -1,55 +1,151 @@
 <div class="hand-area">
   <div class="hand-area__label">Tu mano ({{ hand().length }})</div>
+
   <div class="hand-area__cards">
     @for (card of hand(); track card.id) {
-      <div class="hand-card"
-           [class.hand-card--playable]="isPlayable(card)"
-           [class.hand-card--pokemon]="card.cardType === 'POKEMON'"
-           [class.hand-card--energy]="card.cardType === 'ENERGY'"
-           [class.hand-card--trainer]="card.cardType === 'TRAINER'"
-           (click)="onCardClick(card)"
-           [title]="card.name">
 
-        @if (card.cardType === 'POKEMON') {
+      <!-- ── POKÉMON CARD ── -->
+      @if (card.cardType === 'POKEMON') {
+        <div class="hand-card hand-card--pokemon"
+             [class.hand-card--playable]="isPlayable(card)"
+             (pointerdown)="onPointerDown(card, $event)"
+             (pointerup)="onPointerUp()"
+             (pointerleave)="onPointerLeave()"
+             (click)="onCardClick(card)"
+             [title]="card.name + ' — Mantén para ver'">
+          <div class="hand-card__stage-banner pokemon-stage">{{ stageLabel(card) }}</div>
           <div class="hand-card__art">
             @if (pokemonImg(card)) {
-              <img class="hand-card__img" [src]="pokemonImg(card)!" [alt]="card.name" />
+              <img class="hand-card__img" [src]="pokemonImg(card)!" [alt]="card.name" draggable="false" />
             } @else {
               <span class="hand-card__fallback">🎴</span>
             }
           </div>
-          <div class="hand-card__info">
+          <div class="hand-card__footer pokemon-footer">
+            <span class="hand-card__types">{{ pokemonTypes(card) }}</span>
             <span class="hand-card__name">{{ card.name }}</span>
-            @if (stageLabel(card)) {
-              <span class="hand-card__stage">{{ stageLabel(card) }}</span>
-            }
             @if (pokemonHp(card)) {
-              <span class="hand-card__hp">{{ pokemonHp(card) }}HP</span>
+              <span class="hand-card__hp">{{ pokemonHp(card) }} HP</span>
             }
           </div>
-        } @else if (card.cardType === 'ENERGY') {
-          <div class="hand-card__energy-art" [style.background]="energyBg(card)">
-            <span class="hand-card__energy-icon">{{ energyIcon(card) }}</span>
-          </div>
-          <div class="hand-card__info">
-            <span class="hand-card__name">{{ $any(card).energyType }}</span>
-          </div>
-        } @else {
-          <div class="hand-card__trainer-art">
-            <span class="hand-card__fallback">🃏</span>
-          </div>
-          <div class="hand-card__info">
-            <span class="hand-card__name">{{ card.name }}</span>
-          </div>
-        }
+          @if (isPlayable(card)) {
+            <div class="hand-card__playable-ring"></div>
+          }
+        </div>
+      }
 
-        @if (isPlayable(card)) {
-          <div class="hand-card__playable-ring"></div>
-        }
-      </div>
+      <!-- ── ENERGY CARD ── -->
+      @if (card.cardType === 'ENERGY') {
+        <div class="hand-card hand-card--energy"
+             [class.hand-card--playable]="isPlayable(card)"
+             [style.border-color]="energyBg(card)"
+             [style.box-shadow]="isPlayable(card) ? '0 0 12px ' + energyGlow(card) + ', 0 0 4px ' + energyGlow(card) : 'none'"
+             (pointerdown)="onPointerDown(card, $event)"
+             (pointerup)="onPointerUp()"
+             (pointerleave)="onPointerLeave()"
+             (click)="onCardClick(card)"
+             [title]="'Energía ' + energyNameEs(card) + ' — Mantén para ver'">
+          @if (energyImg(card)) {
+            <img class="hand-card__img hand-card__img--full" [src]="energyImg(card)!" [alt]="card.name" draggable="false" />
+          } @else {
+            <div class="hand-card__energy-bg" [style.background]="'radial-gradient(circle at 40% 35%, ' + energyBg(card) + 'cc, #0a0a1a 80%)'">
+              <div class="energy-circle" [style.border-color]="energyBg(card)" [style.box-shadow]="'0 0 16px ' + energyGlow(card)">
+                <span class="energy-circle__icon">{{ energyIcon(card) }}</span>
+              </div>
+              <div class="energy-label">
+                <span class="energy-label__type">ENERGÍA</span>
+                <span class="energy-label__name" [style.color]="energyBg(card)">{{ energyNameEs(card) }}</span>
+              </div>
+            </div>
+          }
+          @if (isPlayable(card)) {
+            <div class="hand-card__playable-ring" [style.border-color]="energyBg(card)"></div>
+          }
+        </div>
+      }
+
+      <!-- ── TRAINER CARD ── -->
+      @if (card.cardType === 'TRAINER') {
+        <div class="hand-card hand-card--trainer"
+             [class.hand-card--playable]="isPlayable(card)"
+             [style.border-color]="trainerBorderColor(card)"
+             (pointerdown)="onPointerDown(card, $event)"
+             (pointerup)="onPointerUp()"
+             (pointerleave)="onPointerLeave()"
+             (click)="onCardClick(card)"
+             [title]="card.name + ' — Mantén para ver'">
+          @if (trainerImg(card)) {
+            <img class="hand-card__img hand-card__img--full" [src]="trainerImg(card)!" [alt]="card.name" draggable="false" />
+          } @else {
+            <div class="hand-card__trainer-bg" [style.background]="trainerBg(card)">
+              <div class="trainer-subtype-badge" [class]="'trainer-badge--' + trainerSubtype(card).toLowerCase()">
+                {{ trainerSubtypeLabel(card) }}
+              </div>
+              <div class="trainer-icon-wrap">
+                <span class="trainer-icon">{{ trainerIcon(card) }}</span>
+              </div>
+              <div class="trainer-name-wrap">
+                <span class="trainer-name">{{ card.name }}</span>
+              </div>
+            </div>
+          }
+          @if (isPlayable(card)) {
+            <div class="hand-card__playable-ring" [style.border-color]="trainerBorderColor(card)"></div>
+          }
+        </div>
+      }
+
     }
+
     @if (hand().length === 0) {
       <div class="hand-area__empty">Sin cartas en mano</div>
     }
   </div>
 </div>
+
+<!-- ── ZOOM OVERLAY ── -->
+@if (zoomedCard()) {
+  <div class="zoom-overlay" (click)="closeZoom()">
+    <div class="zoom-panel" (click)="$event.stopPropagation()">
+
+      @if (cardImg(zoomedCard()!)) {
+        <img class="zoom-panel__img" [src]="cardImg(zoomedCard()!)!" [alt]="zoomedCard()!.name" />
+
+      } @else if (zoomedCard()!.cardType === 'ENERGY') {
+        <div class="zoom-panel__energy" [style.background]="'radial-gradient(circle at 40% 35%, ' + energyBg(zoomedCard()!) + 'aa, #080814 75%)'">
+          <div class="zoom-panel__energy-symbol"
+               [style.border-color]="energyBg(zoomedCard()!)"
+               [style.box-shadow]="'0 0 30px ' + energyGlow(zoomedCard()!) + ', inset 0 0 20px ' + energyGlow(zoomedCard()!)">
+            <span class="zoom-panel__energy-icon">{{ energyIcon(zoomedCard()!) }}</span>
+          </div>
+          <div class="zoom-panel__energy-info">
+            <span class="zoom-panel__energy-tag">ENERGÍA BÁSICA</span>
+            <span class="zoom-panel__energy-name" [style.color]="energyBg(zoomedCard()!)">{{ energyNameEs(zoomedCard()!) }}</span>
+          </div>
+        </div>
+
+      } @else if (zoomedCard()!.cardType === 'TRAINER') {
+        <div class="zoom-panel__trainer" [style.background]="trainerBg(zoomedCard()!)">
+          <div class="zoom-panel__trainer-header" [style.border-color]="trainerBorderColor(zoomedCard()!)">
+            <span class="zoom-panel__trainer-tag" [class]="'trainer-badge--' + trainerSubtype(zoomedCard()!).toLowerCase()">
+              {{ trainerSubtypeLabel(zoomedCard()!) }}
+            </span>
+          </div>
+          <div class="zoom-panel__trainer-body">
+            <span class="zoom-panel__trainer-icon">{{ trainerIcon(zoomedCard()!) }}</span>
+            <span class="zoom-panel__trainer-name">{{ zoomedCard()!.name }}</span>
+          </div>
+        </div>
+
+      } @else {
+        <div class="zoom-panel__pokemon-fallback">
+          <span class="zoom-panel__fallback-icon">🎴</span>
+          <span class="zoom-panel__fallback-name">{{ zoomedCard()!.name }}</span>
+        </div>
+      }
+
+      <button class="zoom-close" (click)="closeZoom()" aria-label="Cerrar">✕</button>
+    </div>
+    <p class="zoom-hint">Toca fuera para cerrar</p>
+  </div>
+}

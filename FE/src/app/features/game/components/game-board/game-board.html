@@ -28,7 +28,9 @@
       @if (isEnergyMode()) {
         <div class="energy-mode-hint">⚡ Elegí un Pokémon para adjuntar la energía — <button class="cancel-link" (click)="cancelEnergyMode()">Cancelar</button></div>
       }
-      @if (gameState.error()) {
+      @if (validationError()) {
+        <span class="board-error board-error--rule">🚫 {{ validationError() }}</span>
+      } @else if (gameState.error()) {
         <span class="board-error">⚠️ {{ gameState.error() }}</span>
       }
     </div>

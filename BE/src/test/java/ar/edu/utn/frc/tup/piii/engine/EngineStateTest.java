@@ -135,7 +135,7 @@ class EngineStateTest {
         pb.setPlayerId(playerId);
         pb.setHand(new ArrayList<>());
         pb.setDeck(new ArrayList<>(List.of(
-                new EnergyCard("e-" + playerId, "Energy", EnergyType.GRASS))));
+                new EnergyCard("e-" + playerId, "Energy", EnergyType.GRASS, null))));
         pb.setBench(new ArrayList<>());
         pb.setPrizeCards(new ArrayList<>());
         pb.setActivePokemon(PokemonInPlay.of(buildPokemon("Bulbasaur", 60)));

@@ -31,6 +31,7 @@ export interface EnergyCard {
   name: string;
   cardType: 'ENERGY';
   energyType: EnergyType;
+  imageUrl?: string | null;
 }
 
 export interface TrainerCard {
@@ -38,6 +39,7 @@ export interface TrainerCard {
   name: string;
   cardType: 'TRAINER';
   effect: string | null;
+  imageUrl?: string | null;
 }
 
 export type GameCard = PokemonCard | EnergyCard | TrainerCard;

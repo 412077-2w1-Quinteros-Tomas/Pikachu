@@ -195,6 +195,7 @@ public class GameEngine {
             card.setId(id);
             card.setName(entity.getName());
             card.setEnergyType(parseEnergyType(entity.getTypes()));
+            card.setImageUrl(entity.getImageUrl());
             return card;
         }
 
@@ -202,6 +203,7 @@ public class GameEngine {
         card.setId(id);
         card.setName(entity.getName());
         card.setEffect("");
+        card.setImageUrl(entity.getImageUrl());
         return card;
     }
 
@@ -213,10 +215,10 @@ public class GameEngine {
             return copy;
         }
         if (card instanceof EnergyCard e) {
-            return new EnergyCard(e.getId() + "-" + index, e.getName(), e.getEnergyType());
+            return new EnergyCard(e.getId() + "-" + index, e.getName(), e.getEnergyType(), e.getImageUrl());
         }
         if (card instanceof TrainerCard t) {
-            return new TrainerCard(t.getId() + "-" + index, t.getName(), t.getEffect());
+            return new TrainerCard(t.getId() + "-" + index, t.getName(), t.getEffect(), t.getImageUrl());
         }
         return card;
     }
@@ -270,7 +272,7 @@ public class GameEngine {
             deck.add(p);
         }
         for (int i = 0; i < 40; i++) {
-            deck.add(new EnergyCard("default-energy-" + playerId + "-" + i, "Grass Energy", EnergyType.GRASS));
+            deck.add(new EnergyCard("default-energy-" + playerId + "-" + i, "Grass Energy", EnergyType.GRASS, null));
         }
         return deck;
     }

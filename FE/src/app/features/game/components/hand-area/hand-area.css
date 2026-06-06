@@ -1,144 +1,536 @@
 :host { display: block; }
 
+/* ── Hand container ─────────────────────────────────────────────────────── */
+
 .hand-area {
-  background: rgba(10, 10, 20, 0.8);
-  border-top: 1px solid var(--poke-border);
-  padding: 8px 12px;
+  background: rgba(8, 8, 20, 0.9);
+  border-top: 1px solid rgba(255, 203, 5, 0.15);
+  padding: 8px 12px 10px;
   overflow-x: auto;
   flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 203, 5, 0.2) transparent;
 }
 
 .hand-area__label {
   font-size: 9px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--poke-muted);
-  margin-bottom: 6px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 203, 5, 0.5);
+  margin-bottom: 7px;
+  padding-left: 2px;
 }
 
 .hand-area__cards {
   display: flex;
-  gap: 6px;
+  gap: 7px;
   align-items: flex-end;
-  min-height: 100px;
+  min-height: 108px;
   padding-bottom: 4px;
 }
 
+.hand-area__empty {
+  font-size: 12px;
+  color: rgba(120, 130, 160, 0.6);
+  align-self: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* ── Base card ──────────────────────────────────────────────────────────── */
+
 .hand-card {
-  width: 68px;
-  background: var(--poke-surface2);
-  border: 2px solid var(--poke-border);
+  width: 70px;
+  height: 98px;
+  border: 2px solid rgba(255, 203, 5, 0.12);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
-  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
   cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .hand-card--playable {
   cursor: pointer;
-  border-color: rgba(255,203,5,0.4);
 }
 
 .hand-card--playable:hover {
-  transform: translateY(-18px) scale(1.08);
-  border-color: var(--poke-yellow);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 12px rgba(255,203,5,0.3);
+  transform: translateY(-20px) scale(1.1);
   z-index: 10;
+}
+
+/* ── Playable ring animation ─────────────────────────────────────────────── */
+
+.hand-card__playable-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 11px;
+  border: 2px solid var(--poke-yellow);
+  pointer-events: none;
+  animation: ring-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 1; }
+}
+
+/* ── Full-frame image (when imageUrl exists) ────────────────────────────── */
+
+.hand-card__img--full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   POKÉMON CARD
+══════════════════════════════════════════════════════════════════════════ */
+
+.hand-card--pokemon {
+  background: var(--poke-surface2);
+}
+
+.hand-card--pokemon.hand-card--playable:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 203, 5, 0.35);
+}
+
+.hand-card__stage-banner {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 6px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  padding: 1px 3px;
+  z-index: 2;
 }
 
 .hand-card__art {
   width: 100%;
-  height: 62px;
+  flex: 1;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: linear-gradient(135deg, #141428, #1a1a38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hand-card__img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  display: block;
 }
 
 .hand-card__fallback {
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  font-size: 26px;
+  opacity: 0.6;
 }
 
-.hand-card__energy-art {
-  width: 100%;
-  height: 62px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.9;
-}
-
-.hand-card__energy-icon { font-size: 28px; }
-
-.hand-card__trainer-art {
-  width: 100%;
-  height: 62px;
-  background: linear-gradient(135deg, #2a1a3e, #1e1228);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hand-card__info {
-  padding: 3px 4px;
+.hand-card__footer {
+  padding: 3px 4px 2px;
   display: flex;
   flex-direction: column;
   gap: 1px;
+  background: rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
 }
 
 .hand-card__name {
-  font-size: 8px;
+  font-size: 7.5px;
   font-weight: 700;
-  color: var(--poke-text);
+  color: #f0f0ff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.2;
+}
+
+.hand-card__types {
+  font-size: 8px;
+  line-height: 1;
 }
 
 .hand-card__hp {
-  font-size: 8px;
-  color: var(--poke-error);
-  font-weight: 700;
-}
-
-.hand-card__stage {
   font-size: 7px;
-  color: var(--poke-muted);
-  font-weight: 600;
+  color: #ff6655;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ENERGY CARD
+══════════════════════════════════════════════════════════════════════════ */
+
+.hand-card--energy {
+  background: #080814;
+  border-color: rgba(136, 136, 136, 0.4);
+}
+
+.hand-card--energy.hand-card--playable:hover {
+  transform: translateY(-20px) scale(1.1);
+}
+
+.hand-card__energy-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px;
+}
+
+.energy-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.energy-circle__icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.energy-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 100%;
+}
+
+.energy-label__type {
+  font-size: 5.5px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1;
 }
 
-.hand-card__playable-ring {
-  position: absolute;
-  inset: -2px;
-  border-radius: 10px;
-  border: 2px solid var(--poke-yellow);
-  pointer-events: none;
-  animation: ring-pulse 2s ease-in-out infinite;
+.energy-label__name {
+  font-size: 7px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.1;
+  width: 100%;
+  text-align: center;
 }
 
-@keyframes ring-pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+/* ══════════════════════════════════════════════════════════════════════════
+   TRAINER CARD
+══════════════════════════════════════════════════════════════════════════ */
+
+.hand-card--trainer {
+  background: #08080f;
 }
 
-.hand-area__empty {
-  font-size: 12px;
-  color: var(--poke-muted);
-  align-self: center;
+.hand-card--trainer.hand-card--playable:hover {
+  transform: translateY(-20px) scale(1.1);
+}
+
+.hand-card__trainer-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 5px;
+  position: relative;
+}
+
+.trainer-subtype-badge {
+  font-size: 5.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 3px;
+  padding: 1px 4px;
+  width: 100%;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.trainer-badge--supporter {
+  background: rgba(124, 58, 237, 0.4);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.6);
+}
+
+.trainer-badge--item {
+  background: rgba(22, 163, 74, 0.4);
+  color: #86efac;
+  border: 1px solid rgba(22, 163, 74, 0.6);
+}
+
+.trainer-badge--stadium {
+  background: rgba(234, 88, 12, 0.4);
+  color: #fdba74;
+  border: 1px solid rgba(234, 88, 12, 0.6);
+}
+
+.trainer-badge--tool {
+  background: rgba(202, 138, 4, 0.4);
+  color: #fde68a;
+  border: 1px solid rgba(202, 138, 4, 0.6);
+}
+
+.trainer-icon-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trainer-icon {
+  font-size: 24px;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+}
+
+.trainer-name-wrap {
+  width: 100%;
+}
+
+.trainer-name {
+  font-size: 7px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ZOOM OVERLAY
+══════════════════════════════════════════════════════════════════════════ */
+
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 9000;
+  backdrop-filter: blur(6px);
+  animation: zoom-overlay-in 0.2s ease-out;
+}
+
+@keyframes zoom-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.zoom-panel {
+  position: relative;
+  width: 240px;
+  height: 336px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 2px rgba(255, 203, 5, 0.4),
+    0 0 40px rgba(255, 203, 5, 0.2),
+    0 24px 64px rgba(0, 0, 0, 0.9);
+  animation: zoom-panel-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes zoom-panel-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.zoom-panel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Energy zoom panel */
+.zoom-panel__energy {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.zoom-panel__energy-symbol {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.zoom-panel__energy-icon {
+  font-size: 60px;
+  line-height: 1;
+}
+
+.zoom-panel__energy-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoom-panel__energy-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.zoom-panel__energy-name {
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px currentColor;
+}
+
+/* Trainer zoom panel */
+.zoom-panel__trainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.zoom-panel__trainer-header {
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.zoom-panel__trainer-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.zoom-panel__trainer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   padding: 16px;
+}
+
+.zoom-panel__trainer-icon {
+  font-size: 72px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+.zoom-panel__trainer-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Pokémon fallback */
+.zoom-panel__pokemon-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #141428, #1a1a38);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.zoom-panel__fallback-icon { font-size: 80px; }
+
+.zoom-panel__fallback-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f0ff;
+  text-align: center;
+  padding: 0 16px;
+}
+
+/* Close button */
+.zoom-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 1;
+  transition: background 0.15s;
+}
+
+.zoom-close:hover {
+  background: rgba(255, 60, 60, 0.6);
+  color: #fff;
+}
+
+.zoom-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.04em;
+  margin: 0;
+  user-select: none;
 }

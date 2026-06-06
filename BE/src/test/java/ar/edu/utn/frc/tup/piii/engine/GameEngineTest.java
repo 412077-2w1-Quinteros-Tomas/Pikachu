@@ -129,7 +129,7 @@ class GameEngineTest {
         GameBoard board = buildBoard("p1", "p2");
         board.setPhase(GamePhase.MAIN);
         board.setCurrentPlayerId("p1");
-        board.getPlayer1Board().getHand().add(new EnergyCard("e1", "Grass Energy", EnergyType.GRASS));
+        board.getPlayer1Board().getHand().add(new EnergyCard("e1", "Grass Energy", EnergyType.GRASS, null));
 
         assertThat(ruleValidator.canAttachEnergy(board, "p1")).isTrue();
     }
@@ -228,11 +228,11 @@ class GameEngineTest {
         pb.setActivePokemon(buildActivePokemon());
         pb.setHand(new ArrayList<>());
         pb.setDeck(new ArrayList<>(List.of(
-                new EnergyCard("e-" + playerId + "-1", "Energy", EnergyType.GRASS),
-                new EnergyCard("e-" + playerId + "-2", "Energy", EnergyType.GRASS))));
+                new EnergyCard("e-" + playerId + "-1", "Energy", EnergyType.GRASS, null),
+                new EnergyCard("e-" + playerId + "-2", "Energy", EnergyType.GRASS, null))));
         pb.setBench(new ArrayList<>());
         pb.setPrizeCards(new ArrayList<>(List.of(
-                new EnergyCard("p-" + playerId + "-1", "Prize", EnergyType.COLORLESS))));
+                new EnergyCard("p-" + playerId + "-1", "Prize", EnergyType.COLORLESS, null))));
         return pb;
     }
 
