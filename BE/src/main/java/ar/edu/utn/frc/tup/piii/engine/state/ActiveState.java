@@ -12,6 +12,7 @@ import ar.edu.utn.frc.tup.piii.engine.models.GameCard;
 import ar.edu.utn.frc.tup.piii.engine.models.PlayerBoard;
 import ar.edu.utn.frc.tup.piii.engine.models.PokemonCard;
 import ar.edu.utn.frc.tup.piii.engine.models.PokemonInPlay;
+import ar.edu.utn.frc.tup.piii.engine.models.TrainerCard;
 import ar.edu.utn.frc.tup.piii.engine.models.TurnContext;
 import ar.edu.utn.frc.tup.piii.engine.rules.RuleValidator;
 import ar.edu.utn.frc.tup.piii.engine.rules.TurnManager;
@@ -22,6 +23,9 @@ import ar.edu.utn.frc.tup.piii.enums.PokemonStage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -108,9 +112,114 @@ public class ActiveState implements MatchState {
                             Map.of("pokemon", pokemon.getName(), "zone", "bench")));
                 }
             }
+        } else if (card.getCardType() == CardType.TRAINER) {
+            TrainerCard trainer = (TrainerCard) card;
+            pb.getHand().remove(card);
+            applyTrainerEffect(board, trainer, pb, board.getOpponentBoard(playerId), publisher);
+            pb.getDiscardPile().add(trainer);
         }
 
         return board;
+    }
+
+    private void applyTrainerEffect(GameBoard board, TrainerCard trainer, PlayerBoard pb,
+                                    PlayerBoard opp, GameEventPublisher publisher) {
+        String name = trainer.getName().toLowerCase().trim();
+        board.log("Trainer played: " + trainer.getName());
+
+        switch (name) {
+            case "professor sycamore" -> {
+                pb.getDiscardPile().addAll(pb.getHand());
+                pb.getHand().clear();
+                int drawn = 0;
+                while (drawn < 7 && !pb.getDeck().isEmpty()) {
+                    pb.getHand().add(pb.getDeck().remove(0));
+                    drawn++;
+                }
+                publisher.publish(GameEvent.of(GameEventType.CARD_DRAWN, pb.getPlayerId(),
+                        Map.of("source", "Professor Sycamore", "amount", drawn)));
+            }
+            case "shauna" -> {
+                int needed = Math.max(0, 5 - pb.getHand().size());
+                int drawn = 0;
+                while (drawn < needed && !pb.getDeck().isEmpty()) {
+                    pb.getHand().add(pb.getDeck().remove(0));
+                    drawn++;
+                }
+                if (drawn > 0) {
+                    publisher.publish(GameEvent.of(GameEventType.CARD_DRAWN, pb.getPlayerId(),
+                            Map.of("source", "Shauna", "amount", drawn)));
+                }
+            }
+            case "team flare grunt" -> {
+                if (opp != null && opp.getActivePokemon() != null
+                        && !opp.getActivePokemon().getAttachedEnergies().isEmpty()) {
+                    EnergyCard discarded = opp.getActivePokemon().getAttachedEnergies().remove(0);
+                    opp.getDiscardPile().add(discarded);
+                    board.log("Team Flare Grunt discarded " + discarded.getName()
+                            + " from " + opp.getActivePokemon().getPokemon().getName());
+                }
+            }
+            case "super potion" -> {
+                PokemonInPlay active = pb.getActivePokemon();
+                if (active != null && !active.getAttachedEnergies().isEmpty()) {
+                    EnergyCard discarded = active.getAttachedEnergies().remove(0);
+                    pb.getDiscardPile().add(discarded);
+                    int maxHp = active.getPokemon().getHp();
+                    active.setCurrentHp(Math.min(maxHp, active.getCurrentHp() + 60));
+                    board.log("Super Potion healed " + active.getPokemon().getName()
+                            + " to " + active.getCurrentHp() + "/" + maxHp + " HP");
+                }
+            }
+            case "red card" -> {
+                if (opp != null) {
+                    opp.getDeck().addAll(opp.getHand());
+                    opp.getHand().clear();
+                    Collections.shuffle(opp.getDeck());
+                    for (int i = 0; i < 4 && !opp.getDeck().isEmpty(); i++) {
+                        opp.getHand().add(opp.getDeck().remove(0));
+                    }
+                    board.log("Red Card: opponent shuffles hand and draws 4");
+                }
+            }
+            case "great ball" -> {
+                int top = Math.min(7, pb.getDeck().size());
+                List<GameCard> topCards = new ArrayList<>(pb.getDeck().subList(0, top));
+                pb.getDeck().subList(0, top).clear();
+                GameCard found = topCards.stream()
+                        .filter(c -> c.getCardType() == CardType.POKEMON)
+                        .findFirst().orElse(null);
+                if (found != null) {
+                    pb.getHand().add(found);
+                    topCards.remove(found);
+                    board.log("Great Ball found " + found.getName());
+                    publisher.publish(GameEvent.of(GameEventType.CARD_DRAWN, pb.getPlayerId(),
+                            Map.of("source", "Great Ball", "amount", 1)));
+                }
+                Collections.shuffle(topCards);
+                pb.getDeck().addAll(0, topCards);
+            }
+            case "evosoda" -> {
+                int top = Math.min(7, pb.getDeck().size());
+                List<GameCard> topCards = new ArrayList<>(pb.getDeck().subList(0, top));
+                pb.getDeck().subList(0, top).clear();
+                GameCard found = topCards.stream()
+                        .filter(c -> c.getCardType() == CardType.POKEMON)
+                        .filter(c -> {
+                            PokemonStage s = ((PokemonCard) c).getStage();
+                            return s == PokemonStage.STAGE1 || s == PokemonStage.STAGE2;
+                        })
+                        .findFirst().orElse(null);
+                if (found != null) {
+                    pb.getHand().add(found);
+                    topCards.remove(found);
+                    board.log("Evosoda found " + found.getName());
+                }
+                Collections.shuffle(topCards);
+                pb.getDeck().addAll(0, topCards);
+            }
+            default -> board.log("Trainer " + trainer.getName() + " played (no special effect)");
+        }
     }
 
     private GameBoard handleAttachEnergy(TurnContext ctx, GameEventPublisher publisher) {

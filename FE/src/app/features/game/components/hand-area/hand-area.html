@@ -15,8 +15,9 @@
              [title]="card.name + ' — Mantén para ver'">
           <div class="hand-card__stage-banner pokemon-stage">{{ stageLabel(card) }}</div>
           <div class="hand-card__art">
-            @if (pokemonImg(card)) {
-              <img class="hand-card__img" [src]="pokemonImg(card)!" [alt]="card.name" draggable="false" />
+            @if (pokemonImg(card) && !imgFailed(card.id)) {
+              <img class="hand-card__img" [src]="pokemonImg(card)!" [alt]="card.name" draggable="false"
+                   (error)="onImgError(card.id)" />
             } @else {
               <span class="hand-card__fallback">🎴</span>
             }
@@ -45,8 +46,9 @@
              (pointerleave)="onPointerLeave()"
              (click)="onCardClick(card)"
              [title]="'Energía ' + energyNameEs(card) + ' — Mantén para ver'">
-          @if (energyImg(card)) {
-            <img class="hand-card__img hand-card__img--full" [src]="energyImg(card)!" [alt]="card.name" draggable="false" />
+          @if (energyImg(card) && !imgFailed(card.id)) {
+            <img class="hand-card__img hand-card__img--full" [src]="energyImg(card)!" [alt]="card.name" draggable="false"
+                 (error)="onImgError(card.id)" />
           } @else {
             <div class="hand-card__energy-bg" [style.background]="'radial-gradient(circle at 40% 35%, ' + energyBg(card) + 'cc, #0a0a1a 80%)'">
               <div class="energy-circle" [style.border-color]="energyBg(card)" [style.box-shadow]="'0 0 16px ' + energyGlow(card)">
@@ -74,8 +76,9 @@
              (pointerleave)="onPointerLeave()"
              (click)="onCardClick(card)"
              [title]="card.name + ' — Mantén para ver'">
-          @if (trainerImg(card)) {
-            <img class="hand-card__img hand-card__img--full" [src]="trainerImg(card)!" [alt]="card.name" draggable="false" />
+          @if (trainerImg(card) && !imgFailed(card.id)) {
+            <img class="hand-card__img hand-card__img--full" [src]="trainerImg(card)!" [alt]="card.name" draggable="false"
+                 (error)="onImgError(card.id)" />
           } @else {
             <div class="hand-card__trainer-bg" [style.background]="trainerBg(card)">
               <div class="trainer-subtype-badge" [class]="'trainer-badge--' + trainerSubtype(card).toLowerCase()">
@@ -108,8 +111,9 @@
   <div class="zoom-overlay" (click)="closeZoom()">
     <div class="zoom-panel" (click)="$event.stopPropagation()">
 
-      @if (cardImg(zoomedCard()!)) {
-        <img class="zoom-panel__img" [src]="cardImg(zoomedCard()!)!" [alt]="zoomedCard()!.name" />
+      @if (cardImg(zoomedCard()!) && !imgFailed(zoomedCard()!.id)) {
+        <img class="zoom-panel__img" [src]="cardImg(zoomedCard()!)!" [alt]="zoomedCard()!.name"
+             (error)="onImgError(zoomedCard()!.id)" />
 
       } @else if (zoomedCard()!.cardType === 'ENERGY') {
         <div class="zoom-panel__energy" [style.background]="'radial-gradient(circle at 40% 35%, ' + energyBg(zoomedCard()!) + 'aa, #080814 75%)'">

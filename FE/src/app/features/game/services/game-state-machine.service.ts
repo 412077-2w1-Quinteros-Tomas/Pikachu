@@ -469,22 +469,21 @@ function canEvolveInto(evolution: PokemonCard, base: PokemonCard): boolean {
 
 /**
  * Verifica si un Pokémon tiene suficiente energía para un costo de ataque.
- * Soporta energías COLORLESS (cualquier tipo satisface).
+ * Normaliza a mayúsculas para compatibilidad con nombres del API ("Grass" → "GRASS").
  */
 function hasEnoughEnergy(pokemon: PokemonInPlay, cost: string[]): boolean {
-  const attached = [...(pokemon.attachedEnergies ?? [])].map(e => e.energyType);
+  const attached = [...(pokemon.attachedEnergies ?? [])].map(e => (e.energyType as string).toUpperCase());
   const remaining = [...attached];
 
-  // Primero satisfacer los costos específicos
   for (const req of cost) {
-    if (req === 'COLORLESS') continue;
-    const idx = remaining.indexOf(req as any);
+    const upper = req.toUpperCase();
+    if (upper === 'COLORLESS') continue;
+    const idx = remaining.indexOf(upper);
     if (idx === -1) return false;
     remaining.splice(idx, 1);
   }
 
-  // Luego los COLORLESS (cualquier energía restante los satisface)
-  const colorlessNeeded = cost.filter(c => c === 'COLORLESS').length;
+  const colorlessNeeded = cost.filter(c => c.toUpperCase() === 'COLORLESS').length;
   return remaining.length >= colorlessNeeded;
 }
 

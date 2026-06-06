@@ -63,6 +63,7 @@ export class HandAreaComponent implements OnDestroy {
   readonly energyCardSelected = output<string>();
 
   readonly zoomedCard = signal<GameCard | null>(null);
+  private readonly _failedImages = signal<Set<string>>(new Set());
 
   private holdTimer: ReturnType<typeof setTimeout> | null = null;
   private didZoom = false;
@@ -105,6 +106,14 @@ export class HandAreaComponent implements OnDestroy {
 
   closeZoom(): void {
     this.zoomedCard.set(null);
+  }
+
+  imgFailed(cardId: string): boolean {
+    return this._failedImages().has(cardId);
+  }
+
+  onImgError(cardId: string): void {
+    this._failedImages.update(s => new Set([...s, cardId]));
   }
 
   private clearHoldTimer(): void {
